@@ -1,8 +1,9 @@
 import { Aftermath } from "aftermath-ts-sdk";
 import axios from "axios";
+import { COIN_ADDRESSES, COIN_SYNONYMS } from "../../@types/interface";
+
 const af = new Aftermath("MAINNET");
 const prices = af.Prices();
-import { COIN_ADDRESSES, COIN_SYNONYMS } from "../../@types/interface";
 
 /**
  * Normalizes a coin symbol by handling various formats and synonyms
@@ -17,6 +18,11 @@ function normalizeCoinSymbol(symbol: string): string | null {
   return COIN_SYNONYMS[normalized] || null;
 }
 
+/**
+ * Fetches current price for a single coin from CoinGecko
+ * @param coin - Coin identifier (e.g., "bitcoin", "ethereum")
+ * @returns Formatted price string or error message
+ */
 export async function getCoinPrice(coin: string): Promise<string> {
   try {
     const response: any = await axios.get(
@@ -26,7 +32,7 @@ export async function getCoinPrice(coin: string): Promise<string> {
           ids: coin,
           vs_currencies: "usd",
         },
-      }
+      },
     );
 
     const price = response.data[coin]?.usd;
@@ -42,23 +48,20 @@ export async function getCoinPrice(coin: string): Promise<string> {
 
 /**
  * Gets price information for multiple coins from Aftermath Finance
- *
- * Fetches current prices, 24h changes, and other metrics for a list of tokens.
- * Converts the raw Aftermath price data into a standardized format.
- *
- * @param coins - Comma-separated string of coin symbols (e.g., "SUI,USDC") or addresses
+ * @param coins - Comma-separated string of coin symbols or addresses
  * @returns JSON string containing price information or error response
  * @throws Error if price fetch fails or invalid token addresses
  */
 export async function coinsToPrice(coins: string): Promise<string> {
   try {
+    // Convert coin symbols to addresses
     const coinTypes = coins.split(",").map((coin) => {
       const trimmed = coin.trim();
-      // If the input looks like an address, use it directly
+      // Handle direct addresses
       if (trimmed.includes("::")) {
         return trimmed;
       }
-      // Otherwise, try to normalize the symbol and look up the address
+      // Handle symbols
       const normalizedSymbol = normalizeCoinSymbol(trimmed);
       if (!normalizedSymbol) {
         throw new Error(`Unknown coin symbol: ${trimmed}`);
@@ -71,6 +74,7 @@ export async function coinsToPrice(coins: string): Promise<string> {
       return address;
     });
 
+    // Fetch prices from Aftermath
     const priceInfo = await prices.getCoinsToPrice({ coins: coinTypes });
     return JSON.stringify([
       {
@@ -87,9 +91,8 @@ export async function coinsToPrice(coins: string): Promise<string> {
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to retrieve the prices of the specified coins from Aftermath Finance, which led to an error.",
-        response:
-          "The attempt to fetch prices for the given coins was unsuccessful due to an unknown coin symbol.",
+          "The system encountered an issue while trying to retrieve the prices.",
+        response: "Price fetch was unsuccessful.",
         status: "failure",
         query: `Attempted to fetch prices for coins: ${coins}`,
         errors: [`Error with ID: #${errorId}: ${error.message}`],

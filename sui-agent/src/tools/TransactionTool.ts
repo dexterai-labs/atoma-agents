@@ -1,29 +1,24 @@
 import { SuiClient, SuiHTTPTransport } from "@mysten/sui.js/client";
 import { TransactionBlock } from "@mysten/sui.js/transactions";
-import { TokenBalance, NetworkConfig, NetworkConfigs, NETWORK_CONFIG } from "../../@types/interface";
+import {
+  TokenBalance,
+  NetworkConfig,
+  NetworkConfigs,
+  NETWORK_CONFIG,
+} from "../../@types/interface";
 
 /** --------------------------------------------------------------------------
- *                            Transaction Operations
- *
+ * Core Transaction Infrastructure
  * --------------------------------------------------------------------------
  */
 
 /**
  * Creates and initializes a Sui client for transaction operations
- *
- * This function creates a new SuiClient instance configured for the specified network.
- * The client is used for interacting with the Sui blockchain, including querying data
- * and submitting transactions.
- *
- * @param network - The network to connect to ("MAINNET" | "TESTNET")
- * @returns An initialized SuiClient instance
- *
- * @example
- * const client = initSuiClient("MAINNET");
- * const coins = await client.getCoins({ owner: "0x123..." });
+ * @param network - Network to connect to ("MAINNET" | "TESTNET")
+ * @returns Initialized SuiClient instance
  */
 export function initSuiClient(
-  network: "MAINNET" | "TESTNET" = "MAINNET"
+  network: "MAINNET" | "TESTNET" = "MAINNET",
 ): SuiClient {
   return new SuiClient({
     transport: new SuiHTTPTransport({
@@ -34,17 +29,8 @@ export function initSuiClient(
 
 /**
  * Creates a programmable transaction block with common options
- *
- * Initializes a new PTB with gas budget and other common settings.
- * Provides a foundation for building complex transactions.
- *
  * @param gasBudget - Maximum gas to spend (in MIST)
  * @returns Initialized TransactionBlock
- *
- * @example
- * const ptb = createPTB(2000000);
- * ptb.moveCall({...});
- * const result = await executeTransaction(client, ptb, signer);
  */
 export function createPTB(gasBudget: number = 2000000): TransactionBlock {
   const tx = new TransactionBlock();
@@ -53,42 +39,26 @@ export function createPTB(gasBudget: number = 2000000): TransactionBlock {
 }
 
 /** --------------------------------------------------------------------------
- *                            Transaction Operations
- *
+ * Basic Transaction Operations
  * --------------------------------------------------------------------------
  */
 
 /**
  * Builds a transaction for transferring a single token
- *
- * This function creates a transaction block that transfers a specific amount
- * of tokens from one address to another. It automatically selects coins
- * owned by the sender to fulfill the transfer amount. The function handles
- * coin selection and transaction construction.
- *
- * @param client - An initialized SuiClient
- * @param fromAddress - The sender's address that owns the tokens
- * @param toAddress - The recipient's address to receive the tokens
- * @param tokenType - The type of token to transfer (e.g., "0x2::sui::SUI")
- * @param amount - The amount to transfer as a BigInt
- * @returns A prepared TransactionBlock ready for signing
- * @throws Error if sender has insufficient coins or if coin fetch fails
- *
- * @example
- * const tx = await buildTransferTx(
- *   client,
- *   "0x123...", // sender
- *   "0x456...", // recipient
- *   "0x2::sui::SUI",
- *   BigInt(1_000_000) // 0.001 SUI
- * );
+ * @param client - Initialized SuiClient
+ * @param fromAddress - Sender's address
+ * @param toAddress - Recipient's address
+ * @param tokenType - Type of token to transfer (e.g., "0x2::sui::SUI")
+ * @param amount - Amount to transfer
+ * @returns Prepared TransactionBlock
+ * @throws Error if insufficient coins or invalid addresses
  */
 export async function buildTransferTx(
   client: SuiClient,
   fromAddress: string,
   toAddress: string,
   tokenType: string,
-  amount: bigint
+  amount: bigint,
 ): Promise<TransactionBlock> {
   const tx = new TransactionBlock();
 
@@ -102,10 +72,8 @@ export async function buildTransferTx(
     throw new Error(`No ${tokenType} coins found for address ${fromAddress}`);
   }
 
-  // Select coin for transfer
+  // Select coin and perform transfer
   const coin = tx.object(coins.data[0].coinObjectId);
-
-  // Split and transfer
   const [splitCoin] = tx.splitCoins(coin, [tx.pure(amount)]);
   tx.transferObjects([splitCoin], tx.pure(toAddress));
 
@@ -113,39 +81,23 @@ export async function buildTransferTx(
 }
 
 /**
- * Builds a transaction for transferring multiple tokens in a single transaction
- *
- * This function creates a transaction block that can transfer different tokens
- * to the same recipient in one transaction. This is more gas efficient than
- * executing multiple single transfers. It uses the gas object for simplicity
- * in coin selection.
- *
- * @param client - An initialized SuiClient
- * @param from - The sender's address
- * @param to - The recipient's address
- * @param transfers - Array of token balances to transfer, each containing token type and amount
- * @returns A prepared TransactionBlock ready for signing
- * @throws Error if sender has insufficient coins
- *
- * @example
- * const tx = await buildMultiTransferTx(
- *   client,
- *   "0x123...",
- *   "0x456...",
- *   [{
- *     token: "0x2::sui::SUI",
- *     amount: BigInt(1_000_000) // 0.001 SUI
- *   }]
- * );
+ * Builds a transaction for transferring multiple tokens
+ * @param client - Initialized SuiClient
+ * @param from - Sender's address
+ * @param to - Recipient's address
+ * @param transfers - Array of token balances to transfer
+ * @returns Prepared TransactionBlock
+ * @throws Error if insufficient coins
  */
 export async function buildMultiTransferTx(
   client: SuiClient,
   from: string,
   to: string,
-  transfers: TokenBalance[]
+  transfers: TokenBalance[],
 ): Promise<TransactionBlock> {
   const tx = new TransactionBlock();
 
+  // Process each transfer
   for (const transfer of transfers) {
     const [coin] = tx.splitCoins(tx.gas, [tx.pure(transfer.amount)]);
     tx.transferObjects([coin], tx.pure(to));
@@ -154,26 +106,21 @@ export async function buildMultiTransferTx(
   return tx;
 }
 
+/** --------------------------------------------------------------------------
+ * Transaction Utilities
+ * --------------------------------------------------------------------------
+ */
+
 /**
  * Estimates the gas cost for executing a transaction
- *
- * This function performs a dry run of the transaction to estimate
- * its gas consumption. This is useful for showing users the expected
- * cost before they sign. The estimate includes computation costs but
- * may not perfectly match the final gas cost.
- *
- * @param client - An initialized SuiClient
- * @param tx - The transaction block to estimate
- * @returns Estimated gas cost in native token units (MIST)
- * @throws Error if estimation fails or if the transaction is invalid
- *
- * @example
- * const gas = await estimateGas(client, tx);
- * console.log(`Estimated gas: ${gas} MIST`);
+ * @param client - Initialized SuiClient
+ * @param tx - TransactionBlock to estimate
+ * @returns Estimated gas cost in MIST
+ * @throws Error if estimation fails
  */
 export async function estimateGas(
   client: SuiClient,
-  tx: TransactionBlock
+  tx: TransactionBlock,
 ): Promise<bigint> {
   const estimate = await client.dryRunTransactionBlock({
     transactionBlock: tx.serialize(),
@@ -183,33 +130,16 @@ export async function estimateGas(
 
 /**
  * Executes a signed transaction on the network
- *
- * This function submits a transaction to the network and waits for its execution.
- * It provides detailed information about the transaction's effects and events.
- * The function includes options to show effects and events in the response.
- *
- * @param client - An initialized SuiClient
- * @param tx - The transaction block to execute
- * @param signer - The wallet or signer to sign the transaction
- * @returns The transaction execution result including effects and events
- * @throws Error if transaction fails, signing fails, or network error occurs
- *
- * @example
- * const result = await executeTransaction(client, tx, wallet);
- * console.log(`Transaction status: ${result.effects.status}`);
- * console.log(`Gas used: ${result.effects.gasUsed.computationCost}`);
+ * @param client - Initialized SuiClient
+ * @param tx - TransactionBlock to execute
+ * @param signer - Wallet or signer for the transaction
+ * @returns Transaction execution result
+ * @throws Error if transaction fails or network error occurs
  */
-
-/** --------------------------------------------------------------------------
- *                            Transaction Operations
- *
- * --------------------------------------------------------------------------
- */
-
 export async function executeTransaction(
   client: SuiClient,
   tx: TransactionBlock,
-  signer: any // Todo: Replace with proper signer type
+  signer: any,
 ) {
   try {
     const result = await signer.signAndExecuteTransactionBlock({
@@ -250,7 +180,7 @@ export function addMoveCall(
   tx: TransactionBlock,
   target: MoveTarget,
   typeArguments: string[] = [],
-  args: any[] = []
+  args: any[] = [],
 ): TransactionBlock {
   tx.moveCall({
     target,
@@ -268,26 +198,20 @@ export function addMoveCall(
 
 /**
  * Creates a transaction to merge multiple coins of the same type
- * Combines multiple coin objects of the same type into a single coin.
- * Useful for consolidating fragmented coin balances.
- *
- * @param client - An initialized SuiClient
- * @param coinType - Type of coins to merge (e.g., "0x2::sui::SUI")
+ * @param client - Initialized SuiClient
+ * @param coinType - Type of coins to merge
  * @param walletAddress - Address owning the coins
- * @param maxCoins - Maximum number of coins to merge in one tx (default: 10)
- * @returns TransactionBlock ready to be signed and executed
+ * @param maxCoins - Maximum number of coins to merge (default: 10)
+ * @returns TransactionBlock ready for signing
  * @throws Error if no coins found or invalid coin type
- *
- * @example
- * const tx = await createMergeCoinsTx(client, "0x2::sui::SUI", "0x123...");
- * const result = await executeTransaction(client, tx, signer);
  */
 export async function createMergeCoinsTx(
   client: SuiClient,
   coinType: string,
   walletAddress: string,
-  maxCoins: number = 10
+  maxCoins: number = 10,
 ): Promise<TransactionBlock> {
+  // Fetch available coins
   const coins = await client.getCoins({
     owner: walletAddress,
     coinType,
@@ -297,6 +221,7 @@ export async function createMergeCoinsTx(
     throw new Error("Not enough coins to merge");
   }
 
+  // Create merge transaction
   const tx = new TransactionBlock();
   const coinsToMerge = coins.data.slice(0, maxCoins);
   const primaryCoin = coinsToMerge[0].coinObjectId;
@@ -308,29 +233,23 @@ export async function createMergeCoinsTx(
 
 /**
  * Creates a sponsored transaction block
- *
- * Builds a transaction that can be sponsored by another account.
- * Useful for gas abstraction where a different account pays for gas.
- *
- * @param tx - The transaction block to sponsor
+ * @param tx - Transaction block to sponsor
  * @param sender - Address of the transaction sender
  * @param sponsor - Address of the gas sponsor
  * @param sponsorCoins - Coins owned by sponsor to use for gas
  * @returns Transaction block ready for sponsor signature
- *
- * @example
- * const tx = createPTB();
- * const sponsoredTx = await createSponsoredTx(tx, userAddr, sponsorAddr, sponsorCoins);
  */
 export async function createSponsoredTx(
   tx: TransactionBlock,
   sender: string,
   sponsor: string,
-  sponsorCoins: { objectId: string; version: string; digest: string }[]
+  sponsorCoins: { objectId: string; version: string; digest: string }[],
 ): Promise<TransactionBlock> {
+  // Extract transaction kind
   const kindBytes = await tx.build({ onlyTransactionKind: true });
   const sponsoredTx = TransactionBlock.fromKind(kindBytes);
 
+  // Set up sponsored transaction
   sponsoredTx.setSender(sender);
   sponsoredTx.setGasOwner(sponsor);
   sponsoredTx.setGasPayment(sponsorCoins);
@@ -340,23 +259,15 @@ export async function createSponsoredTx(
 
 /**
  * Creates a vector of objects for move calls
- *
- * Helper function to construct a vector of objects that can be
- * passed into Move calls.
- *
  * @param tx - Transaction block to add vector to
  * @param elements - Array of objects/values to include
  * @param type - Optional type annotation for the vector
- * @returns The move vector input
- *
- * @example
- * const vec = createMoveVec(tx, [coin1, coin2]);
- * tx.moveCall({ target: "0x2::coin::join_vec", arguments: [vec] });
+ * @returns Move vector input for transaction
  */
 export function createMoveVec(
   tx: TransactionBlock,
   elements: any[],
-  type?: string
+  type?: string,
 ) {
   return tx.makeMoveVec({
     objects: elements,
@@ -364,15 +275,25 @@ export function createMoveVec(
   });
 }
 
+/**
+ * Transaction agent class providing high-level transaction operations
+ */
 export class TransactionAgent {
   private client: SuiClient;
 
+  /**
+   * Initialize transaction agent with network configuration
+   * @param network - Network to connect to (default: MAINNET)
+   */
   constructor(network: "MAINNET" | "TESTNET" = "MAINNET") {
     this.client = new SuiClient({ url: NETWORK_CONFIG[network].fullnode });
   }
 
   /**
    * Creates a transaction block for transferring SUI
+   * @param amount - Amount of SUI to transfer
+   * @param recipient - Recipient address
+   * @returns Prepared transaction block
    */
   buildTransferTx(amount: bigint, recipient: string): TransactionBlock {
     const tx = new TransactionBlock();
@@ -383,26 +304,33 @@ export class TransactionAgent {
 
   /**
    * Creates a transaction block for merging coins
+   * @param destinationCoin - Coin to merge into
+   * @param sourceCoins - Coins to merge from
+   * @returns Prepared transaction block
    */
   buildMergeCoinsTx(
     destinationCoin: string,
-    sourceCoins: string[]
+    sourceCoins: string[],
   ): TransactionBlock {
     const tx = new TransactionBlock();
     tx.mergeCoins(
       tx.object(destinationCoin),
-      sourceCoins.map((coin) => tx.object(coin))
+      sourceCoins.map((coin) => tx.object(coin)),
     );
     return tx;
   }
 
   /**
    * Creates a transaction block for a Move call
+   * @param target - Move function target
+   * @param typeArguments - Type arguments for generic functions
+   * @param args - Arguments for the function call
+   * @returns Prepared transaction block
    */
   buildMoveCallTx(
     target: `${string}::${string}::${string}`,
     typeArguments: string[],
-    args: (string | number | boolean | bigint)[]
+    args: (string | number | boolean | bigint)[],
   ): TransactionBlock {
     const tx = new TransactionBlock();
     tx.moveCall({
@@ -420,12 +348,17 @@ export class TransactionAgent {
 
   /**
    * Creates a sponsored transaction
+   * @param tx - Original transaction block
+   * @param sender - Transaction sender address
+   * @param sponsor - Gas sponsor address
+   * @param sponsorCoins - Coins for gas payment
+   * @returns Sponsored transaction block
    */
   async createSponsoredTx(
     tx: TransactionBlock,
     sender: string,
     sponsor: string,
-    sponsorCoins: { objectId: string; version: string; digest: string }[]
+    sponsorCoins: { objectId: string; version: string; digest: string }[],
   ): Promise<TransactionBlock> {
     const kindBytes = await tx.build({ onlyTransactionKind: true });
     const sponsoredTx = TransactionBlock.fromKind(kindBytes);
@@ -439,6 +372,10 @@ export class TransactionAgent {
 
   /**
    * Creates a vector of objects for move calls
+   * @param tx - Transaction block
+   * @param elements - Vector elements
+   * @param type - Optional type annotation
+   * @returns Move vector
    */
   createMoveVec(tx: TransactionBlock, elements: any[], type?: string) {
     return tx.makeMoveVec({
@@ -449,6 +386,8 @@ export class TransactionAgent {
 
   /**
    * Estimates gas for a transaction
+   * @param tx - Transaction block to estimate
+   * @returns Estimated gas cost in MIST
    */
   async estimateGas(tx: TransactionBlock): Promise<bigint> {
     try {
@@ -465,6 +404,8 @@ export class TransactionAgent {
 
   /**
    * Waits for a transaction to be confirmed
+   * @param digest - Transaction digest
+   * @returns Transaction block with effects and events
    */
   async waitForTransaction(digest: string) {
     return this.client.waitForTransactionBlock({
@@ -478,6 +419,8 @@ export class TransactionAgent {
 
   /**
    * Gets all coins owned by an address
+   * @param owner - Address to check
+   * @returns Array of coin objects
    */
   async getCoins(owner: string) {
     const { data } = await this.client.getCoins({
@@ -488,6 +431,8 @@ export class TransactionAgent {
 
   /**
    * Gets coin balances for an address
+   * @param address - Address to check
+   * @returns Total balance information
    */
   async getBalance(address: string): Promise<{ totalBalance: bigint }> {
     const balance = await this.client.getBalance({

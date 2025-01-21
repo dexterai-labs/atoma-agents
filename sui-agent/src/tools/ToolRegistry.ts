@@ -36,7 +36,7 @@ async function transferCoinWrapper(
   fromAddress: string,
   toAddress: string,
   tokenType: string,
-  amount: string
+  amount: string,
 ): Promise<string> {
   const client = initSuiClient();
   const tx = await buildTransferTx(
@@ -44,7 +44,7 @@ async function transferCoinWrapper(
     fromAddress,
     toAddress,
     tokenType,
-    BigInt(amount)
+    BigInt(amount),
   );
   return JSON.stringify([
     {
@@ -60,14 +60,14 @@ async function transferCoinWrapper(
 async function multiTransferWrapper(
   fromAddress: string,
   toAddress: string,
-  transfers: TokenBalance[]
+  transfers: TokenBalance[],
 ): Promise<string> {
   const client = initSuiClient();
   const tx = await buildMultiTransferTx(
     client,
     fromAddress,
     toAddress,
-    transfers
+    transfers,
   );
   return JSON.stringify([
     {
@@ -83,14 +83,14 @@ async function multiTransferWrapper(
 async function mergeCoinsWrapper(
   coinType: string,
   walletAddress: string,
-  maxCoins?: number
+  maxCoins?: number,
 ): Promise<string> {
   const client = initSuiClient();
   const tx = await createMergeCoinsTx(
     client,
     coinType,
     walletAddress,
-    maxCoins
+    maxCoins,
   );
   return JSON.stringify([
     {
@@ -106,7 +106,7 @@ async function mergeCoinsWrapper(
 }
 
 async function estimateGasWrapper(
-  transaction: TransactionBlock
+  transaction: TransactionBlock,
 ): Promise<string> {
   const client = initSuiClient();
   const gasEstimate = await estimateGas(client, transaction);
@@ -134,7 +134,7 @@ export function registerAllTools(tools: Tools) {
         required: true,
       },
     ],
-    getCoinPrice
+    getCoinPrice,
   );
 
   tools.registerTool(
@@ -149,7 +149,7 @@ export function registerAllTools(tools: Tools) {
         required: true,
       },
     ],
-    coinsToPrice
+    coinsToPrice,
   );
 
   // APR Tool
@@ -164,7 +164,7 @@ export function registerAllTools(tools: Tools) {
         required: true,
       },
     ],
-    getTokenAPR
+    getTokenAPR,
   );
 
   // Pool Tools
@@ -179,14 +179,14 @@ export function registerAllTools(tools: Tools) {
         required: true,
       },
     ],
-    getPool
+    getPool,
   );
 
   tools.registerTool(
     "get_all_pools",
     "Tool to get information about all available pools",
     [],
-    getAllPools
+    getAllPools,
   );
 
   tools.registerTool(
@@ -212,7 +212,7 @@ export function registerAllTools(tools: Tools) {
         required: false,
       },
     ],
-    getPoolEvents
+    getPoolEvents,
   );
 
   // Pool Ranking Tools
@@ -239,7 +239,7 @@ export function registerAllTools(tools: Tools) {
         required: false,
       },
     ],
-    getRankedPools
+    getRankedPools,
   );
 
   tools.registerTool(
@@ -265,7 +265,7 @@ export function registerAllTools(tools: Tools) {
         required: false,
       },
     ],
-    getFilteredPools
+    getFilteredPools,
   );
 
   // Trade Tools
@@ -298,7 +298,7 @@ export function registerAllTools(tools: Tools) {
         required: false,
       },
     ],
-    getPoolSpotPrice
+    getPoolSpotPrice,
   );
 
   tools.registerTool(
@@ -330,7 +330,7 @@ export function registerAllTools(tools: Tools) {
         required: true,
       },
     ],
-    getTradeAmountOut
+    getTradeAmountOut,
   );
 
   tools.registerTool(
@@ -356,7 +356,7 @@ export function registerAllTools(tools: Tools) {
         required: true,
       },
     ],
-    getTradeRoute
+    getTradeRoute,
   );
 
   tools.registerTool(
@@ -388,7 +388,7 @@ export function registerAllTools(tools: Tools) {
         required: false,
       },
     ],
-    getDepositTransaction
+    getDepositTransaction,
   );
 
   tools.registerTool(
@@ -426,7 +426,7 @@ export function registerAllTools(tools: Tools) {
         required: false,
       },
     ],
-    getWithdrawTransaction
+    getWithdrawTransaction,
   );
 
   // Transaction Tools
@@ -459,7 +459,7 @@ export function registerAllTools(tools: Tools) {
         required: true,
       },
     ],
-    transferCoinWrapper
+    transferCoinWrapper,
   );
 
   tools.registerTool(
@@ -485,7 +485,7 @@ export function registerAllTools(tools: Tools) {
         required: true,
       },
     ],
-    multiTransferWrapper
+    multiTransferWrapper,
   );
 
   tools.registerTool(
@@ -511,7 +511,7 @@ export function registerAllTools(tools: Tools) {
         required: false,
       },
     ],
-    mergeCoinsWrapper
+    mergeCoinsWrapper,
   );
 
   tools.registerTool(
@@ -525,6 +525,6 @@ export function registerAllTools(tools: Tools) {
         required: true,
       },
     ],
-    estimateGasWrapper
+    estimateGasWrapper,
   );
 }

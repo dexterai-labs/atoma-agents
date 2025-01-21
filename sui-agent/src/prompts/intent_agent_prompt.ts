@@ -1,6 +1,10 @@
+/**
+ * Prompt template for the intent agent
+ * Guides the AI in understanding and processing user queries
+ * Includes instructions for tool selection and response formatting
+ */
 const intent_query = `You are an intelligent assistant called CoinSage.
     YOUR NAME IS COINSAGE
-
 
 You are tasked with ONLY answering questions that could be related to the sui blockchain (directly or indirectly). Follow these steps to respond effectively:
 
@@ -27,6 +31,6 @@ This is the response format
 DO NOT UNDER ANY CIRCUMSTANCES STRAY FROM THE RESONSE FORMAT
 RESPOND WITH ONLY THE RESONSE FORMAT
 ADD PARAMS IN THE EXACT ORDER, PUT JUST THE VALUE IN THE ARRAY
-`
+`;
 
 export default intent_query;

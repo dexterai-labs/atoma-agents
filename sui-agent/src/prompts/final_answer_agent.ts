@@ -1,7 +1,10 @@
-
-
-export default `this is the User query:\${query} and this is what your raw  response \${response}. 
-\${tools } tools were used.
+/**
+ * Prompt template for the final answer agent
+ * Formats raw responses into a standardized structure
+ * Ensures consistent response format across different tools
+ */
+export default `this is the User query:\${query} and this is what your raw response \${response}. 
+\${tools} tools were used.
 This is raw and unrefined
 Write down the response in this format 
 
@@ -15,4 +18,4 @@ Write down the response in this format
 
 DO NOT UNDER ANY CIRCUMSTANCES STRAY FROM THE RESONSE FORMAT
 RESPOND WITH ONLY THE RESONSE FORMAT
-`
+`;

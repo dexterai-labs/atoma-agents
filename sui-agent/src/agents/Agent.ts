@@ -2,28 +2,58 @@ import { IntentAgentResponse } from "../../@types/interface";
 import Tools from "../tools/";
 import { registerAllTools } from "../tools/ToolRegistry";
 import Utils from "../utils";
-const tools=new Tools()
-const utils=new Utils(tools);
 
+// Initialize tools and utilities
+const tools = new Tools();
+const utils = new Utils(tools);
 
-class Agents{
-async IntentAgent(prompt:string){
+/**
+ * Main agent class that handles intent processing and decision making
+ * Coordinates between different agent types to process user queries
+ */
+class Agents {
+  /**
+   * Processes initial user intent and selects appropriate tools
+   * @param prompt - User's input query
+   * @returns IntentAgentResponse containing tool selection and processing details
+   */
+  async IntentAgent(prompt: string) {
+    // Register all available tools before processing
     registerAllTools(tools);
-   let  IntentResponse:IntentAgentResponse=await tools.selectAppropriateTool(prompt) as IntentAgentResponse;
-   return IntentResponse;
-}
-async DecisionMakingAgent(intentResponse:any,query:string){
-    return await utils.makeDecision(intentResponse as IntentAgentResponse,query)
-}
-async SuperVisorAgent(prompt:string){
-    let res=await this.IntentAgent(prompt)
-    console.log(res)
-    let finalAnswer=await this.DecisionMakingAgent(res,prompt);
-    console.log(finalAnswer,'final')
+    let IntentResponse: IntentAgentResponse =
+      (await tools.selectAppropriateTool(prompt)) as IntentAgentResponse;
+    return IntentResponse;
+  }
+
+  /**
+   * Makes decisions based on the intent response and user query
+   * @param intentResponse - Response from the IntentAgent
+   * @param query - Original user query
+   * @returns Processed response after decision making
+   */
+  async DecisionMakingAgent(intentResponse: any, query: string) {
+    return await utils.makeDecision(
+      intentResponse as IntentAgentResponse,
+      query,
+    );
+  }
+
+  /**
+   * Main entry point for processing user queries
+   * Coordinates between IntentAgent and DecisionMakingAgent
+   * @param prompt - User's input query
+   * @returns Final processed response
+   */
+  async SuperVisorAgent(prompt: string) {
+    // Process intent
+    let res = await this.IntentAgent(prompt);
+    console.log(res);
+
+    // Make decision based on intent
+    let finalAnswer = await this.DecisionMakingAgent(res, prompt);
+    console.log(finalAnswer, "final");
     return finalAnswer;
+  }
 }
-}
-
-
 
 export default Agents;

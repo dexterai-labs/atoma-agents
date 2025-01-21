@@ -1,20 +1,26 @@
 import { Aftermath } from "aftermath-ts-sdk";
 import { PoolInfo } from "../../@types/interface";
 
+// Initialize Aftermath SDK for mainnet
 const af = new Aftermath("MAINNET");
 const pools = af.Pools();
 
+// Type definitions for pool operations
 type RankingMetric = "apr" | "tvl" | "fees" | "volume";
 type SortOrder = "asc" | "desc";
 
 /**
  * Processes raw pool data into standardized format
+ * @param pool - Raw pool data from Aftermath
+ * @param poolId - Unique identifier for the pool
+ * @returns Standardized pool information
  */
 async function processPool(pool: any, poolId: string): Promise<PoolInfo> {
   try {
     const metrics = await pools.getPoolsStats({ poolIds: [poolId] });
     const poolMetrics = metrics[0];
 
+    // Extract token information
     const tokens = Object.keys(pool.pool.coins || {});
     const reserves = tokens.map((token) => {
       const coinData = pool.pool.coins[token];
@@ -43,7 +49,9 @@ async function processPool(pool: any, poolId: string): Promise<PoolInfo> {
 }
 
 /**
- * Gets pool information by ID
+ * Gets detailed information about a specific pool
+ * @param poolId - Unique identifier for the pool
+ * @returns JSON string containing pool details or error information
  */
 export async function getPool(poolId: string): Promise<string> {
   try {
@@ -86,7 +94,8 @@ export async function getPool(poolId: string): Promise<string> {
 }
 
 /**
- * Gets all available pools
+ * Retrieves information about all available pools
+ * @returns JSON string containing all pool information
  */
 export async function getAllPools(): Promise<string> {
   try {
@@ -95,11 +104,11 @@ export async function getAllPools(): Promise<string> {
       allPools.map(async (pool) => {
         if (!pool.pool?.objectId) return null;
         return processPool(pool, pool.pool.objectId);
-      })
+      }),
     );
 
     const validPools = processedPools.filter(
-      (pool): pool is PoolInfo => pool !== null && pool.tokens.length > 0
+      (pool): pool is PoolInfo => pool !== null && pool.tokens.length > 0,
     );
 
     return JSON.stringify([
@@ -128,12 +137,16 @@ export async function getAllPools(): Promise<string> {
 }
 
 /**
- * Gets pool events (deposits/withdrawals)
+ * Gets deposit or withdrawal events for a specific pool
+ * @param poolId - Unique identifier for the pool
+ * @param eventType - Type of events to fetch ("deposit" or "withdraw")
+ * @param limit - Maximum number of events to return
+ * @returns JSON string containing event information
  */
 export async function getPoolEvents(
   poolId: string,
   eventType: "deposit" | "withdraw",
-  limit: number = 10
+  limit: number = 10,
 ): Promise<string> {
   try {
     const pool = await pools.getPool({ objectId: poolId });
@@ -171,13 +184,17 @@ export async function getPoolEvents(
 
 /**
  * Calculates pool APR based on volume and TVL
+ * @param pool - Pool data containing volume and TVL information
+ * @returns Calculated APR as a percentage
  */
 export function calculatePoolApr(pool: any): number {
   try {
+    // Convert values from base units
     const volume24h = Number(pool.pool.volume24h || 0) / 1e9;
     const tvl = Number(pool.pool.lpCoinSupply || 0) / 1e9;
     if (tvl === 0) return 0;
 
+    // Calculate annual revenue and APR
     const feeRate = Number(pool.pool.flatness || 0) / 1e9;
     const feeRevenue24h = volume24h * feeRate;
     const annualRevenue = feeRevenue24h * 365;
@@ -190,23 +207,28 @@ export function calculatePoolApr(pool: any): number {
 
 /**
  * Gets ranked pools by specified metric
+ * @param metric - Metric to rank by (apr, tvl, fees, volume)
+ * @param limit - Maximum number of pools to return
+ * @param order - Sort order (ascending or descending)
+ * @returns JSON string containing ranked pool information
  */
 export async function getRankedPools(
   metric: RankingMetric = "tvl",
   limit: number = 10,
-  order: SortOrder = "desc"
+  order: SortOrder = "desc",
 ): Promise<string> {
   try {
+    // Fetch and process all pools
     const allPools = await pools.getAllPools();
     const processedPools = await Promise.all(
       allPools.map(async (pool) => {
         if (!pool.pool?.objectId) return null;
         return processPool(pool, pool.pool.objectId);
-      })
+      }),
     );
 
     const validPools = processedPools.filter(
-      (pool): pool is PoolInfo => pool !== null && pool.tokens.length > 0
+      (pool): pool is PoolInfo => pool !== null && pool.tokens.length > 0,
     );
 
     // Sort pools based on the specified metric
@@ -263,7 +285,7 @@ export async function getRankedPools(
             pools: rankedPools,
           },
           null,
-          2
+          2,
         ),
         status: "success",
         query: `Retrieved top ${limit} pools ranked by ${metric} in ${order}ending order`,
@@ -287,21 +309,27 @@ export async function getRankedPools(
 
 /**
  * Gets pools filtered by specific criteria
+ * @param minTvl - Minimum Total Value Locked requirement
+ * @param minApr - Minimum Annual Percentage Rate requirement
+ * @param tokens - Array of token symbols that must be in the pool
+ * @returns JSON string containing filtered pool information
  */
 export async function getFilteredPools(
   minTvl?: number,
   minApr?: number,
-  tokens?: string[]
+  tokens?: string[],
 ): Promise<string> {
   try {
+    // Fetch and process all pools
     const allPools = await pools.getAllPools();
     const processedPools = await Promise.all(
       allPools.map(async (pool) => {
         if (!pool.pool?.objectId) return null;
         return processPool(pool, pool.pool.objectId);
-      })
+      }),
     );
 
+    // Apply filters
     let filteredPools = processedPools.filter((pool): pool is PoolInfo => {
       if (!pool || pool.tokens.length === 0) return false;
 
@@ -316,8 +344,8 @@ export async function getFilteredPools(
         const poolTokens = pool.tokens.map((t) => t.toLowerCase());
         const hasRequiredTokens = tokens.every((token) =>
           poolTokens.some((poolToken) =>
-            poolToken.includes(token.toLowerCase())
-          )
+            poolToken.includes(token.toLowerCase()),
+          ),
         );
         if (!hasRequiredTokens) return false;
       }
@@ -351,7 +379,7 @@ export async function getFilteredPools(
             pools: formattedPools,
           },
           null,
-          2
+          2,
         ),
         status: "success",
         query: `Retrieved pools with${minTvl ? ` min TVL $${minTvl}` : ""}${
