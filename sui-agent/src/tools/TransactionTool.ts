@@ -1,11 +1,11 @@
-import { SuiClient, SuiHTTPTransport } from "@mysten/sui.js/client";
-import { TransactionBlock } from "@mysten/sui.js/transactions";
+import { SuiClient, SuiHTTPTransport } from '@mysten/sui.js/client';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
 import {
   TokenBalance,
   NetworkConfig,
   NetworkConfigs,
   NETWORK_CONFIG,
-} from "../../@types/interface";
+} from '../../@types/interface';
 
 /** --------------------------------------------------------------------------
  * Core Transaction Infrastructure
@@ -18,7 +18,7 @@ import {
  * @returns Initialized SuiClient instance
  */
 export function initSuiClient(
-  network: "MAINNET" | "TESTNET" = "MAINNET",
+  network: 'MAINNET' | 'TESTNET' = 'MAINNET',
 ): SuiClient {
   return new SuiClient({
     transport: new SuiHTTPTransport({
@@ -151,7 +151,7 @@ export async function executeTransaction(
     });
     return result;
   } catch (error) {
-    console.error("Transaction failed:", error);
+    console.error('Transaction failed:', error);
     throw error;
   }
 }
@@ -218,7 +218,7 @@ export async function createMergeCoinsTx(
   });
 
   if (coins.data.length <= 1) {
-    throw new Error("Not enough coins to merge");
+    throw new Error('Not enough coins to merge');
   }
 
   // Create merge transaction
@@ -285,7 +285,7 @@ export class TransactionAgent {
    * Initialize transaction agent with network configuration
    * @param network - Network to connect to (default: MAINNET)
    */
-  constructor(network: "MAINNET" | "TESTNET" = "MAINNET") {
+  constructor(network: 'MAINNET' | 'TESTNET' = 'MAINNET') {
     this.client = new SuiClient({ url: NETWORK_CONFIG[network].fullnode });
   }
 
@@ -337,7 +337,7 @@ export class TransactionAgent {
       target,
       typeArguments,
       arguments: args.map((arg) => {
-        if (typeof arg === "string" && arg.startsWith("0x")) {
+        if (typeof arg === 'string' && arg.startsWith('0x')) {
           return tx.object(arg);
         }
         return tx.pure(arg);
@@ -396,7 +396,7 @@ export class TransactionAgent {
       });
       return BigInt(dryRunResult.effects.gasUsed.computationCost);
     } catch (error) {
-      console.error("Error estimating gas:", error);
+      console.error('Error estimating gas:', error);
       // Return a default gas estimate if dry run fails
       return BigInt(2000000);
     }
@@ -437,7 +437,7 @@ export class TransactionAgent {
   async getBalance(address: string): Promise<{ totalBalance: bigint }> {
     const balance = await this.client.getBalance({
       owner: address,
-      coinType: "0x2::sui::SUI",
+      coinType: '0x2::sui::SUI',
     });
 
     return {

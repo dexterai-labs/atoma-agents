@@ -1,4 +1,4 @@
-import { Aftermath } from "aftermath-ts-sdk";
+import { Aftermath } from 'aftermath-ts-sdk';
 
 /**
  * Singleton class for managing Aftermath SDK interactions for APR calculations
@@ -13,7 +13,7 @@ class AftermathTool {
    */
   static getInstance(): Aftermath {
     if (!this.instance) {
-      this.instance = new Aftermath("MAINNET");
+      this.instance = new Aftermath('MAINNET');
     }
     return this.instance;
   }

@@ -1,7 +1,7 @@
-import final_answer_agent_prompt from "../prompts/final_answer_agent";
-import { atomaChat } from "../config/atoma";
-import Tools from "../tools";
-import { IntentAgentResponse } from "../../@types/interface";
+import final_answer_agent_prompt from '../prompts/final_answer_agent';
+import { atomaChat } from '../config/atoma';
+import Tools from '../tools';
+import { IntentAgentResponse } from '../../@types/interface';
 
 /**
  * Utility class for processing agent responses and making decisions
@@ -50,14 +50,14 @@ class Utils {
    */
   private async finalAnswer(response: any, query: string, tools?: any) {
     const finalPrompt = final_answer_agent_prompt
-      .replace("${query}", query)
-      .replace("${response}", response)
-      .replace("tools", `${tools || null}`);
+      .replace('${query}', query)
+      .replace('${response}', response)
+      .replace('tools', `${tools || null}`);
 
     const finalAns: any = await atomaChat([
       {
         content: finalPrompt,
-        role: "assistant",
+        role: 'assistant',
       },
     ]);
     let res = finalAns.choices[0].message.content;
@@ -74,8 +74,8 @@ class Utils {
    */
   private async executeTools(selected_tool: string, args: any[] | null) {
     const tool = this.tools.getAllTools().find((t) => t.name === selected_tool);
-    console.log("Selected tool:", selected_tool);
-    console.log("Tool arguments:", args);
+    console.log('Selected tool:', selected_tool);
+    console.log('Tool arguments:', args);
 
     if (!tool) {
       throw new Error(`Tool ${selected_tool} not found`);
@@ -84,11 +84,11 @@ class Utils {
     try {
       const toolArgs = args || [];
       const result = await tool.process(...toolArgs);
-      return await this.finalAnswer(result, "", selected_tool);
+      return await this.finalAnswer(result, '', selected_tool);
     } catch (error: any) {
-      console.error("Error executing tool:", error);
+      console.error('Error executing tool:', error);
       return {
-        status: "error",
+        status: 'error',
         message: `Error executing ${selected_tool}: ${error.message}`,
       };
     }

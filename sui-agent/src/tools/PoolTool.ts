@@ -1,13 +1,13 @@
-import { Aftermath } from "aftermath-ts-sdk";
-import { PoolInfo } from "../../@types/interface";
+import { Aftermath } from 'aftermath-ts-sdk';
+import { PoolInfo } from '../../@types/interface';
 
 // Initialize Aftermath SDK for mainnet
-const af = new Aftermath("MAINNET");
+const af = new Aftermath('MAINNET');
 const pools = af.Pools();
 
 // Type definitions for pool operations
-type RankingMetric = "apr" | "tvl" | "fees" | "volume";
-type SortOrder = "asc" | "desc";
+type RankingMetric = 'apr' | 'tvl' | 'fees' | 'volume';
+type SortOrder = 'asc' | 'desc';
 
 /**
  * Processes raw pool data into standardized format
@@ -59,9 +59,9 @@ export async function getPool(poolId: string): Promise<string> {
     if (!pool) {
       return JSON.stringify([
         {
-          reasoning: "Pool not found with the specified ID.",
+          reasoning: 'Pool not found with the specified ID.',
           response: `No pool exists with ID: ${poolId}`,
-          status: "failure",
+          status: 'failure',
           query: `Attempted to fetch pool with ID: ${poolId}`,
           errors: [`Pool not found: ${poolId}`],
         },
@@ -71,9 +71,9 @@ export async function getPool(poolId: string): Promise<string> {
     return JSON.stringify([
       {
         reasoning:
-          "Successfully retrieved pool information from Aftermath Finance.",
+          'Successfully retrieved pool information from Aftermath Finance.',
         response: JSON.stringify(processedPool, null, 2),
-        status: "success",
+        status: 'success',
         query: `Fetched pool with ID: ${poolId}`,
         errors: [],
       },
@@ -83,9 +83,9 @@ export async function getPool(poolId: string): Promise<string> {
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to retrieve the pool information.",
-        response: "The attempt to fetch pool information was unsuccessful.",
-        status: "failure",
+          'The system encountered an issue while trying to retrieve the pool information.',
+        response: 'The attempt to fetch pool information was unsuccessful.',
+        status: 'failure',
         query: `Attempted to fetch pool with ID: ${poolId}`,
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },
@@ -114,10 +114,10 @@ export async function getAllPools(): Promise<string> {
     return JSON.stringify([
       {
         reasoning:
-          "Successfully retrieved all available pools from Aftermath Finance.",
+          'Successfully retrieved all available pools from Aftermath Finance.',
         response: JSON.stringify(validPools, null, 2),
-        status: "success",
-        query: "Fetched all available pools",
+        status: 'success',
+        query: 'Fetched all available pools',
         errors: [],
       },
     ]);
@@ -126,10 +126,10 @@ export async function getAllPools(): Promise<string> {
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to retrieve all pools.",
-        response: "The attempt to fetch all pools was unsuccessful.",
-        status: "failure",
-        query: "Attempted to fetch all available pools",
+          'The system encountered an issue while trying to retrieve all pools.',
+        response: 'The attempt to fetch all pools was unsuccessful.',
+        status: 'failure',
+        query: 'Attempted to fetch all available pools',
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },
     ]);
@@ -145,7 +145,7 @@ export async function getAllPools(): Promise<string> {
  */
 export async function getPoolEvents(
   poolId: string,
-  eventType: "deposit" | "withdraw",
+  eventType: 'deposit' | 'withdraw',
   limit: number = 10,
 ): Promise<string> {
   try {
@@ -155,7 +155,7 @@ export async function getPoolEvents(
     }
 
     const eventData =
-      eventType === "deposit"
+      eventType === 'deposit'
         ? await pool.getDepositEvents({ limit })
         : await pool.getWithdrawEvents({ limit });
 
@@ -163,7 +163,7 @@ export async function getPoolEvents(
       {
         reasoning: `Successfully retrieved ${eventType} events for the pool.`,
         response: JSON.stringify(eventData, null, 2),
-        status: "success",
+        status: 'success',
         query: `Fetched ${eventType} events for pool: ${poolId}`,
         errors: [],
       },
@@ -173,8 +173,8 @@ export async function getPoolEvents(
     return JSON.stringify([
       {
         reasoning: `The system encountered an issue while trying to retrieve ${eventType} events.`,
-        response: "The attempt to fetch pool events was unsuccessful.",
-        status: "failure",
+        response: 'The attempt to fetch pool events was unsuccessful.',
+        status: 'failure',
         query: `Attempted to fetch ${eventType} events for pool: ${poolId}`,
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },
@@ -200,7 +200,7 @@ export function calculatePoolApr(pool: any): number {
     const annualRevenue = feeRevenue24h * 365;
     return (annualRevenue / tvl) * 100;
   } catch (error) {
-    console.error("Error calculating pool APR:", error);
+    console.error('Error calculating pool APR:', error);
     return 0;
   }
 }
@@ -213,9 +213,9 @@ export function calculatePoolApr(pool: any): number {
  * @returns JSON string containing ranked pool information
  */
 export async function getRankedPools(
-  metric: RankingMetric = "tvl",
+  metric: RankingMetric = 'tvl',
   limit: number = 10,
-  order: SortOrder = "desc",
+  order: SortOrder = 'desc',
 ): Promise<string> {
   try {
     // Fetch and process all pools
@@ -236,19 +236,19 @@ export async function getRankedPools(
       let valueA: number, valueB: number;
 
       switch (metric) {
-        case "apr":
+        case 'apr':
           valueA = a.apr;
           valueB = b.apr;
           break;
-        case "tvl":
+        case 'tvl':
           valueA = a.tvl;
           valueB = b.tvl;
           break;
-        case "fees":
+        case 'fees':
           valueA = a.fee;
           valueB = b.fee;
           break;
-        case "volume":
+        case 'volume':
           valueA = a.tvl * a.fee; // Using TVL * fee as a proxy for volume
           valueB = b.tvl * b.fee;
           break;
@@ -257,7 +257,7 @@ export async function getRankedPools(
           valueB = b.tvl;
       }
 
-      return order === "desc" ? valueB - valueA : valueA - valueB;
+      return order === 'desc' ? valueB - valueA : valueA - valueB;
     });
 
     // Take only the requested number of pools
@@ -287,7 +287,7 @@ export async function getRankedPools(
           null,
           2,
         ),
-        status: "success",
+        status: 'success',
         query: `Retrieved top ${limit} pools ranked by ${metric} in ${order}ending order`,
         errors: [],
       },
@@ -297,9 +297,9 @@ export async function getRankedPools(
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to retrieve ranked pools.",
-        response: "The attempt to fetch ranked pools was unsuccessful.",
-        status: "failure",
+          'The system encountered an issue while trying to retrieve ranked pools.',
+        response: 'The attempt to fetch ranked pools was unsuccessful.',
+        status: 'failure',
         query: `Attempted to fetch top ${limit} pools ranked by ${metric}`,
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },
@@ -367,7 +367,7 @@ export async function getFilteredPools(
     return JSON.stringify([
       {
         reasoning:
-          "Successfully retrieved pools matching the specified criteria.",
+          'Successfully retrieved pools matching the specified criteria.',
         response: JSON.stringify(
           {
             filters: {
@@ -381,10 +381,10 @@ export async function getFilteredPools(
           null,
           2,
         ),
-        status: "success",
-        query: `Retrieved pools with${minTvl ? ` min TVL $${minTvl}` : ""}${
-          minApr ? ` min APR ${minApr}%` : ""
-        }${tokens ? ` containing tokens ${tokens.join(", ")}` : ""}`,
+        status: 'success',
+        query: `Retrieved pools with${minTvl ? ` min TVL $${minTvl}` : ''}${
+          minApr ? ` min APR ${minApr}%` : ''
+        }${tokens ? ` containing tokens ${tokens.join(', ')}` : ''}`,
         errors: [],
       },
     ]);
@@ -393,10 +393,10 @@ export async function getFilteredPools(
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to retrieve filtered pools.",
-        response: "The attempt to fetch filtered pools was unsuccessful.",
-        status: "failure",
-        query: "Attempted to fetch filtered pools",
+          'The system encountered an issue while trying to retrieve filtered pools.',
+        response: 'The attempt to fetch filtered pools was unsuccessful.',
+        status: 'failure',
+        query: 'Attempted to fetch filtered pools',
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },
     ]);

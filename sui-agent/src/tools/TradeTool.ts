@@ -1,7 +1,7 @@
-import { Aftermath } from "aftermath-ts-sdk";
+import { Aftermath } from 'aftermath-ts-sdk';
 
 // Initialize Aftermath SDK for mainnet
-const af = new Aftermath("MAINNET");
+const af = new Aftermath('MAINNET');
 const pools = af.Pools();
 
 /**
@@ -18,8 +18,8 @@ async function findTokensInPool(
   coinOutType: string,
 ) {
   const availableTokens = Object.keys(pool.pool.coins);
-  console.log("Available tokens:", availableTokens);
-  console.log("Looking for tokens:", { coinInType, coinOutType });
+  console.log('Available tokens:', availableTokens);
+  console.log('Looking for tokens:', { coinInType, coinOutType });
 
   // Find matching tokens (case-insensitive and partial match)
   const findToken = (searchToken: string) => {
@@ -34,12 +34,12 @@ async function findTokensInPool(
   if (!matchedCoinIn || !matchedCoinOut) {
     throw new Error(
       `Tokens not found in pool. Available tokens: ${availableTokens.join(
-        ", ",
+        ', ',
       )}`,
     );
   }
 
-  console.log("Matched tokens:", { matchedCoinIn, matchedCoinOut });
+  console.log('Matched tokens:', { matchedCoinIn, matchedCoinOut });
   return { matchedCoinIn, matchedCoinOut };
 }
 
@@ -77,7 +77,7 @@ export async function getPoolSpotPrice(
 
     return JSON.stringify([
       {
-        reasoning: "Successfully calculated spot price between tokens.",
+        reasoning: 'Successfully calculated spot price between tokens.',
         response: JSON.stringify(
           {
             spotPrice,
@@ -87,7 +87,7 @@ export async function getPoolSpotPrice(
           null,
           2,
         ),
-        status: "success",
+        status: 'success',
         query: `Calculated spot price for ${coinInType} to ${coinOutType} in pool ${poolId}`,
         errors: [],
       },
@@ -97,9 +97,9 @@ export async function getPoolSpotPrice(
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to calculate the spot price.",
-        response: "The attempt to calculate spot price was unsuccessful.",
-        status: "failure",
+          'The system encountered an issue while trying to calculate the spot price.',
+        response: 'The attempt to calculate spot price was unsuccessful.',
+        status: 'failure',
         query: `Attempted to calculate spot price for ${coinInType} to ${coinOutType} in pool ${poolId}`,
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },
@@ -144,7 +144,7 @@ export async function getTradeAmountOut(
 
     return JSON.stringify([
       {
-        reasoning: "Successfully calculated expected output amount for trade.",
+        reasoning: 'Successfully calculated expected output amount for trade.',
         response: JSON.stringify(
           {
             amountOut: amountOut.toString(),
@@ -154,7 +154,7 @@ export async function getTradeAmountOut(
           null,
           2,
         ),
-        status: "success",
+        status: 'success',
         query: `Calculated output amount for ${coinInAmount} ${coinInType} to ${coinOutType}`,
         errors: [],
       },
@@ -164,10 +164,10 @@ export async function getTradeAmountOut(
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to calculate the trade output amount.",
+          'The system encountered an issue while trying to calculate the trade output amount.',
         response:
-          "The attempt to calculate trade output amount was unsuccessful.",
-        status: "failure",
+          'The attempt to calculate trade output amount was unsuccessful.',
+        status: 'failure',
         query: `Attempted to calculate output for ${coinInAmount} ${coinInType} to ${coinOutType}`,
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },
@@ -216,7 +216,7 @@ export async function getTradeRoute(
 
     return JSON.stringify([
       {
-        reasoning: "Successfully found trade route between tokens.",
+        reasoning: 'Successfully found trade route between tokens.',
         response: JSON.stringify(
           {
             route,
@@ -226,7 +226,7 @@ export async function getTradeRoute(
           null,
           2,
         ),
-        status: "success",
+        status: 'success',
         query: `Found trade route for ${coinInAmount} ${coinInType} to ${coinOutType}`,
         errors: [],
       },
@@ -236,9 +236,9 @@ export async function getTradeRoute(
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to find a trade route.",
-        response: "The attempt to find a trade route was unsuccessful.",
-        status: "failure",
+          'The system encountered an issue while trying to find a trade route.',
+        response: 'The attempt to find a trade route was unsuccessful.',
+        status: 'failure',
         query: `Attempted to find trade route for ${coinInAmount} ${coinInType} to ${coinOutType}`,
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },
@@ -281,7 +281,7 @@ export async function getDepositTransaction(
       if (!matchedToken) {
         throw new Error(
           `Token ${token} not found in pool. Available tokens: ${availableTokens.join(
-            ", ",
+            ', ',
           )}`,
         );
       }
@@ -298,7 +298,7 @@ export async function getDepositTransaction(
 
     return JSON.stringify([
       {
-        reasoning: "Successfully generated deposit transaction data.",
+        reasoning: 'Successfully generated deposit transaction data.',
         response: JSON.stringify(
           {
             tx,
@@ -307,7 +307,7 @@ export async function getDepositTransaction(
           null,
           2,
         ),
-        status: "success",
+        status: 'success',
         query: `Generated deposit transaction for pool ${poolId}`,
         errors: [],
       },
@@ -317,10 +317,10 @@ export async function getDepositTransaction(
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to generate the deposit transaction.",
+          'The system encountered an issue while trying to generate the deposit transaction.',
         response:
-          "The attempt to generate deposit transaction was unsuccessful.",
-        status: "failure",
+          'The attempt to generate deposit transaction was unsuccessful.',
+        status: 'failure',
         query: `Attempted to generate deposit transaction for pool ${poolId}`,
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },
@@ -365,7 +365,7 @@ export async function getWithdrawTransaction(
       if (!matchedToken) {
         throw new Error(
           `Token ${token} not found in pool. Available tokens: ${availableTokens.join(
-            ", ",
+            ', ',
           )}`,
         );
       }
@@ -383,7 +383,7 @@ export async function getWithdrawTransaction(
 
     return JSON.stringify([
       {
-        reasoning: "Successfully generated withdraw transaction data.",
+        reasoning: 'Successfully generated withdraw transaction data.',
         response: JSON.stringify(
           {
             tx,
@@ -392,7 +392,7 @@ export async function getWithdrawTransaction(
           null,
           2,
         ),
-        status: "success",
+        status: 'success',
         query: `Generated withdraw transaction for pool ${poolId}`,
         errors: [],
       },
@@ -402,10 +402,10 @@ export async function getWithdrawTransaction(
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to generate the withdraw transaction.",
+          'The system encountered an issue while trying to generate the withdraw transaction.',
         response:
-          "The attempt to generate withdraw transaction was unsuccessful.",
-        status: "failure",
+          'The attempt to generate withdraw transaction was unsuccessful.',
+        status: 'failure',
         query: `Attempted to generate withdraw transaction for pool ${poolId}`,
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },

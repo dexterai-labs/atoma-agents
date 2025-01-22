@@ -1,8 +1,8 @@
-import http from "http";
-import app from "./app";
-import atomaSDK from "./config/atoma";
-import config from "./config/config";
-import { AtomaSDK } from "atoma-sdk";
+import http from 'http';
+import app from './app';
+import atomaSDK from './config/atoma';
+import config from './config/config';
+import { AtomaSDK } from 'atoma-sdk';
 
 /**
  * Main application class that initializes and starts the server

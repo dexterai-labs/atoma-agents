@@ -1,6 +1,6 @@
-import express, { Application } from "express";
-import cors from "cors";
-import v1routes from "./routes/v1";
+import express, { Application } from 'express';
+import cors from 'cors';
+import v1routes from './routes/v1';
 
 // Initialize Express application
 const app: Application = express();

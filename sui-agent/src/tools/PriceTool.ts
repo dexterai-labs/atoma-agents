@@ -1,8 +1,8 @@
-import { Aftermath } from "aftermath-ts-sdk";
-import axios from "axios";
-import { COIN_ADDRESSES, COIN_SYNONYMS } from "../../@types/interface";
+import { Aftermath } from 'aftermath-ts-sdk';
+import axios from 'axios';
+import { COIN_ADDRESSES, COIN_SYNONYMS } from '../../@types/interface';
 
-const af = new Aftermath("MAINNET");
+const af = new Aftermath('MAINNET');
 const prices = af.Prices();
 
 /**
@@ -14,7 +14,7 @@ function normalizeCoinSymbol(symbol: string): string | null {
   const normalized = symbol
     .trim()
     .toUpperCase()
-    .replace(/[^A-Z_]/g, "");
+    .replace(/[^A-Z_]/g, '');
   return COIN_SYNONYMS[normalized] || null;
 }
 
@@ -30,7 +30,7 @@ export async function getCoinPrice(coin: string): Promise<string> {
       {
         params: {
           ids: coin,
-          vs_currencies: "usd",
+          vs_currencies: 'usd',
         },
       },
     );
@@ -55,10 +55,10 @@ export async function getCoinPrice(coin: string): Promise<string> {
 export async function coinsToPrice(coins: string): Promise<string> {
   try {
     // Convert coin symbols to addresses
-    const coinTypes = coins.split(",").map((coin) => {
+    const coinTypes = coins.split(',').map((coin) => {
       const trimmed = coin.trim();
       // Handle direct addresses
-      if (trimmed.includes("::")) {
+      if (trimmed.includes('::')) {
         return trimmed;
       }
       // Handle symbols
@@ -79,9 +79,9 @@ export async function coinsToPrice(coins: string): Promise<string> {
     return JSON.stringify([
       {
         reasoning:
-          "Successfully retrieved current price information from Aftermath Finance for the requested coins.",
+          'Successfully retrieved current price information from Aftermath Finance for the requested coins.',
         response: JSON.stringify(priceInfo, null, 2),
-        status: "success",
+        status: 'success',
         query: `Fetched prices for coins: ${coins}`,
         errors: [],
       },
@@ -91,9 +91,9 @@ export async function coinsToPrice(coins: string): Promise<string> {
     return JSON.stringify([
       {
         reasoning:
-          "The system encountered an issue while trying to retrieve the prices.",
-        response: "Price fetch was unsuccessful.",
-        status: "failure",
+          'The system encountered an issue while trying to retrieve the prices.',
+        response: 'Price fetch was unsuccessful.',
+        status: 'failure',
         query: `Attempted to fetch prices for coins: ${coins}`,
         errors: [`Error with ID: #${errorId}: ${error.message}`],
       },
