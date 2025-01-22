@@ -48,7 +48,7 @@ class Tools {
       JSON.stringify(this.getAllTools()),
     );
 
-    let ai: any = await atomaChat([
+    const ai: any = await atomaChat([
       {
         content: finalPrompt,
         role: 'system',
@@ -58,7 +58,7 @@ class Tools {
         role: 'user',
       },
     ]);
-    let res = ai.choices[0].message.content;
+    const res = ai.choices[0].message.content;
 
     const applicableTools: toolResponse[] = JSON.parse(res);
     if (applicableTools.length > 0) return applicableTools[0];

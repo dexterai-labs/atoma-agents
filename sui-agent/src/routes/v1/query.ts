@@ -7,7 +7,7 @@ import Agents from '../../agents/Agent';
  * @type {Router}
  */
 const queryRouter = Router();
-let agent = new Agents();
+const agent = new Agents();
 
 /**
  * POST /query
@@ -19,8 +19,8 @@ let agent = new Agents();
  * @throws {Error} If the agent processing fails
  */
 queryRouter.post('/query', async (req: Request, res: Response) => {
-  let { prompt } = req.body;
-  let agentResponse = await agent.SuperVisorAgent(prompt);
+  const { prompt } = req.body;
+  const agentResponse = await agent.SuperVisorAgent(prompt);
   console.log(agentResponse, 'wow');
   res.json(agentResponse);
 });

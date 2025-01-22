@@ -146,7 +146,7 @@ export async function getAllPools(): Promise<string> {
 export async function getPoolEvents(
   poolId: string,
   eventType: 'deposit' | 'withdraw',
-  limit: number = 10,
+  limit = 10,
 ): Promise<string> {
   try {
     const pool = await pools.getPool({ objectId: poolId });
@@ -214,7 +214,7 @@ export function calculatePoolApr(pool: any): number {
  */
 export async function getRankedPools(
   metric: RankingMetric = 'tvl',
-  limit: number = 10,
+  limit = 10,
   order: SortOrder = 'desc',
 ): Promise<string> {
   try {
@@ -330,7 +330,7 @@ export async function getFilteredPools(
     );
 
     // Apply filters
-    let filteredPools = processedPools.filter((pool): pool is PoolInfo => {
+    const filteredPools = processedPools.filter((pool): pool is PoolInfo => {
       if (!pool || pool.tokens.length === 0) return false;
 
       // Apply TVL filter

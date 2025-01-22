@@ -55,7 +55,7 @@ export async function getPoolSpotPrice(
   poolId: string,
   coinInType: string,
   coinOutType: string,
-  withFees: boolean = true,
+  withFees = true,
 ): Promise<string> {
   try {
     // Fetch pool and validate tokens
@@ -121,7 +121,7 @@ export async function getTradeAmountOut(
   coinInType: string,
   coinOutType: string,
   coinInAmount: bigint,
-  referral: boolean = false,
+  referral = false,
 ): Promise<string> {
   try {
     // Fetch pool and validate tokens
@@ -259,7 +259,7 @@ export async function getDepositTransaction(
   poolId: string,
   walletAddress: string,
   amountsIn: { [key: string]: bigint },
-  slippage: number = 0.01,
+  slippage = 0.01,
   referrer?: string,
 ): Promise<string> {
   try {
@@ -343,7 +343,7 @@ export async function getWithdrawTransaction(
   walletAddress: string,
   amountsOutDirection: { [key: string]: bigint },
   lpCoinAmount: bigint,
-  slippage: number = 0.01,
+  slippage = 0.01,
   referrer?: string,
 ): Promise<string> {
   try {

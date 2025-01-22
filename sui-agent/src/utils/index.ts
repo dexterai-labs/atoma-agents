@@ -60,7 +60,7 @@ class Utils {
         role: 'assistant',
       },
     ]);
-    let res = finalAns.choices[0].message.content;
+    const res = finalAns.choices[0].message.content;
     console.log(finalPrompt);
     return JSON.parse(res);
   }

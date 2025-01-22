@@ -33,7 +33,7 @@ class Agents {
   async IntentAgent(prompt: string) {
     // Register all available tools before processing
     registerAllTools(tools);
-    let IntentResponse: IntentAgentResponse =
+    const IntentResponse: IntentAgentResponse =
       (await tools.selectAppropriateTool(prompt)) as IntentAgentResponse;
     return IntentResponse;
   }
@@ -59,11 +59,11 @@ class Agents {
    */
   async SuperVisorAgent(prompt: string) {
     // Process intent
-    let res = await this.IntentAgent(prompt);
+    const res = await this.IntentAgent(prompt);
     console.log(res);
 
     // Make decision based on intent
-    let finalAnswer = await this.DecisionMakingAgent(res, prompt);
+    const finalAnswer = await this.DecisionMakingAgent(res, prompt);
     console.log(finalAnswer, 'final');
     return finalAnswer;
   }

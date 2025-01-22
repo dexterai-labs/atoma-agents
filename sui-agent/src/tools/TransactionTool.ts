@@ -32,7 +32,7 @@ export function initSuiClient(
  * @param gasBudget - Maximum gas to spend (in MIST)
  * @returns Initialized TransactionBlock
  */
-export function createPTB(gasBudget: number = 2000000): TransactionBlock {
+export function createPTB(gasBudget = 2000000): TransactionBlock {
   const tx = new TransactionBlock();
   tx.setGasBudget(gasBudget);
   return tx;
@@ -209,7 +209,7 @@ export async function createMergeCoinsTx(
   client: SuiClient,
   coinType: string,
   walletAddress: string,
-  maxCoins: number = 10,
+  maxCoins = 10,
 ): Promise<TransactionBlock> {
   // Fetch available coins
   const coins = await client.getCoins({
