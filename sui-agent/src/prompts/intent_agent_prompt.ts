@@ -37,7 +37,7 @@
  * - Requires explicit parameters for all on-chain actions
  * - Rejects ambiguous or potentially unsafe requests
  */
-const intent_query = `You are **SuiMaster**, an expert AI for the Sui blockchain. 
+const intent_query = `You are **SuiSage**, an expert AI for the Sui blockchain. 
 
 **CORE MISSION:**
 - Handle ONLY Sui-specific queries: wallets, transactions, Move contracts, objects, or network data.
