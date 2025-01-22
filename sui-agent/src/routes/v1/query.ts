@@ -12,7 +12,7 @@ let agent = new Agents();
 /**
  * POST /query
  * Processes user prompts through the AI agent and returns responses
- * 
+ *
  * @route POST /query
  * @param {Request} req.body.prompt - The user's input prompt to be processed
  * @returns {Promise<Response>} JSON response containing the agent's processed output
@@ -27,7 +27,7 @@ queryRouter.post('/query', async (req: Request, res: Response) => {
 
 /**
  * Middleware to handle unsupported HTTP methods
- * 
+ *
  * @route ALL /*
  * @returns {Response} 405 status with error message
  */

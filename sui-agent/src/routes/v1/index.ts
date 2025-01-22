@@ -11,12 +11,12 @@ const v1Router = Router();
 
 /**
  * Mount sub-routers to the v1 API router
- * 
+ *
  * Route Structure:
  * - rootRouter:   Base endpoints for system status
  *   - GET /health - Health check endpoint
  *   - GET /status - System status information
- * 
+ *
  * - queryRouter:  Blockchain query operations
  *   - GET /query/* - Various blockchain data queries
  *   - POST /query/batch - Batch query operations

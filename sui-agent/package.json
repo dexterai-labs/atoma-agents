@@ -5,6 +5,8 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.{js,ts,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{js,ts,json,md}\"",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/src/agent.js",
     "dev": "nodemon ./src/agent.ts"
@@ -28,6 +30,7 @@
     "@types/axios": "^0.9.36",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
-    "prettier": "^3.4.2"
+    "prettier": "^3.4.2",
+    "eslint": "^8.57.0"
   }
 }

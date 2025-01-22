@@ -1,10 +1,10 @@
 /**
  * Prompt template for the final answer agent that standardizes and structures raw responses.
- * 
+ *
  * @description
  * This template takes a user query, raw response, and tool usage information to produce
  * a consistently formatted response object with the following structure:
- * 
+ *
  * {
  *   reasoning: string     - Explanation of the agent's thought process
  *   response: string|JSON - The formatted answer or JSON object
@@ -12,7 +12,7 @@
  *   query: string        - Original user query
  *   errors: any[]        - Array of encountered errors, if any
  * }
- * 
+ *
  * @example
  * The template enforces strict response formatting to ensure consistent
  * output structure across different tool executions.
