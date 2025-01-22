@@ -1,7 +1,23 @@
 /**
- * Prompt template for the intent agent
- * Guides the AI in understanding and processing user queries
- * Includes instructions for tool selection and response formatting
+ * Prompt template for the intent agent (CoinSage)
+ * 
+ * This template defines the behavior and response format for the AI assistant
+ * specifically focused on Sui blockchain related queries. The agent follows
+ * a structured decision-making process to handle user queries:
+ * 
+ * 1. Self-Assessment: Determines if direct response is possible
+ * 2. Tool Selection: Chooses appropriate tool if direct response isn't possible
+ * 3. Information Gathering: Identifies when additional context is needed
+ * 
+ * Response Format:
+ * {
+ *   success: boolean,        // true if query can be handled without additional info
+ *   selected_tool: string,   // name of chosen tool, or null if not needed
+ *   response: string,        // direct response if available, null otherwise
+ *   needs_additional_info: boolean,  // true if more context is required
+ *   additional_info_required: string[], // list of required information
+ *   tool_arguments: any[]    // arguments needed for the selected tool
+ * }
  */
 const intent_query = `You are an intelligent assistant called CoinSage.
     YOUR NAME IS COINSAGE

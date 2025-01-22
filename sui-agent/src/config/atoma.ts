@@ -1,5 +1,9 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
 import { AtomaSDK } from 'atoma-sdk';
+
+dotenv.config();
+
+const ATOMA_CHAT_COMPLETIONS_MODEL = 'meta-llama/Llama-3.3-70B-Instruct';
 
 // Initialize Atoma SDK with authentication
 const atomaSDK = new AtomaSDK({
@@ -18,7 +22,7 @@ async function atomaChat(
 ) {
   return await atomaSDK.chat.create({
     messages,
-    model: model || 'meta-llama/Llama-3.3-70B-Instruct',
+    model: model || ATOMA_CHAT_COMPLETIONS_MODEL,
     maxTokens: 128,
   });
 }
