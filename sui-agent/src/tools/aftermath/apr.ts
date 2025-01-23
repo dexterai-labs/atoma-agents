@@ -1,5 +1,5 @@
 import { Aftermath } from 'aftermath-ts-sdk';
-import { handleError } from '../utils';
+import { handleError } from '../../utils';
 
 /**
  * Singleton class for managing Aftermath SDK interactions for APR calculations.

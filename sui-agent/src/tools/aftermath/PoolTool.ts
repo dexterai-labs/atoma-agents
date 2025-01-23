@@ -1,6 +1,6 @@
 import { Aftermath } from 'aftermath-ts-sdk';
-import { PoolInfo } from '../../@types/interface';
-import { handleError } from '../utils';
+import { PoolInfo } from '../../../@types/interface';
+import { handleError } from '../../utils';
 
 // Initialize Aftermath SDK for mainnet
 const af = new Aftermath('MAINNET');

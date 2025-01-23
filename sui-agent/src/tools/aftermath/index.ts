@@ -1,7 +1,7 @@
-import intent_agent_prompt from '../prompts/intent_agent_prompt';
+import intent_agent_prompt from '../../prompts/intent_agent_prompt';
 
-import { Tool, ToolParameter, toolResponse } from '../../@types/interface';
-import { atomaChat } from '../config/atoma';
+import { Tool, ToolParameter, toolResponse } from '../../../@types/interface';
+import { atomaChat } from '../../config/atoma';
 
 /**
  * Main tools management class

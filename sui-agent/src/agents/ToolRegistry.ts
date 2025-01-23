@@ -1,20 +1,20 @@
-import Tools from '../aftermath/index';
-import { getCoinPrice, coinsToPrice } from '../aftermath/PriceTool';
-import { getTokenAPR } from '../aftermath/apr';
+import Tools from '../tools/aftermath';
+import { getCoinPrice, coinsToPrice } from '../tools/aftermath/PriceTool';
+import { getTokenAPR } from '../tools/aftermath/apr';
 import {
   getPool,
   getAllPools,
   getPoolEvents,
   getRankedPools,
   getFilteredPools,
-} from '../aftermath/PoolTool';
+} from '../tools/aftermath/PoolTool';
 import {
   getPoolSpotPrice,
   getTradeAmountOut,
   getTradeRoute,
   getDepositTransaction,
   getWithdrawTransaction,
-} from '../aftermath/TradeTool';
+} from '../tools/aftermath/TradeTool';
 import {
   buildTransferTx,
   buildMultiTransferTx,
@@ -26,7 +26,7 @@ import {
 import {
   depositIntoTopPools,
   buildMultiPoolWithdrawTx,
-} from '../aftermath/PoolTransactionTool';
+} from '../tools/aftermath/PoolTransactionTool';
 import { TokenBalance } from '../../@types/interface';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import {
@@ -34,7 +34,7 @@ import {
   getSuiTvl,
   getAfSuiExchangeRate,
   getStakeTransaction,
-} from '../aftermath/staking';
+} from '../tools/aftermath/staking';
 
 /* 
 format for tool registry is:

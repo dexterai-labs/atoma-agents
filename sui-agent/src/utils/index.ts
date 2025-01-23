@@ -1,6 +1,6 @@
 import final_answer_agent_prompt from '../prompts/final_answer_agent';
 import { atomaChat } from '../config/atoma';
-import Tools from '../aftermath';
+import Tools from '../tools/aftermath';
 import { IntentAgentResponse } from '../../@types/interface';
 import { randomUUID } from 'crypto';
 

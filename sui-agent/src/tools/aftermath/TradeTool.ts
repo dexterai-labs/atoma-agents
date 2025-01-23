@@ -1,5 +1,5 @@
 import { Aftermath } from 'aftermath-ts-sdk';
-import { handleError } from '../utils';
+import { handleError } from '../../utils';
 
 // Initialize Aftermath SDK for mainnet
 const af = new Aftermath('MAINNET');
