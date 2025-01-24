@@ -26,7 +26,7 @@ import {
   getSuiTvlWrapper,
   getAfSuiExchangeRateWrapper,
   getStakeTransactionWrapper,
-} from '../utils/tool_wrappers';
+} from '../utils/toolWrappers';
 
 /* 
 format for tool registry is:
