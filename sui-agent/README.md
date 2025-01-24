@@ -1,4 +1,4 @@
-# Sui Agent
+# Atoma Sage
 
 A specialized AI agent for interacting with the Sui blockchain and its protocols, with current support for Aftermath Finance operations.
 

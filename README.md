@@ -1,6 +1,6 @@
-# Atoma Agents
+# Atoma Sage
 
-Built on the Sui blockchain and powered by Atoma Network's AI Infrastructure, Atoma agents are sets of extensible Intelligent Layer system for blockchain operations. This project aims to provide a comprehensive solution for interacting with various blockchain protocols through natural language processing.
+Built on the Sui blockchain and powered by Atoma Network's AI Infrastructure, AtomaSage are sets of extensible Intelligent Layer system for blockchain operations. This project aims to provide a comprehensive solution for interacting with various blockchain protocols through natural language processing.
 
 ## Vision
 
