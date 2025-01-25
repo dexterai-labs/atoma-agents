@@ -1,10 +1,5 @@
 import { SuiClient, SuiHTTPTransport } from '@mysten/sui/client';
 import {
-  Transaction,
-  TransactionObjectInput,
-  TransactionResult,
-} from '@mysten/sui/transactions';
-import {
   SuilendClient,
   LENDING_MARKET_ID,
   LENDING_MARKET_TYPE,

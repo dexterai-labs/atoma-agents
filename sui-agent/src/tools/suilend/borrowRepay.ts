@@ -1,5 +1,4 @@
 import { Transaction } from '@mysten/sui/transactions';
-import { SuilendClient } from '@suilend/sdk/client';
 import { handleError } from '../../utils';
 import { suilendClientWrapper } from '.';
 

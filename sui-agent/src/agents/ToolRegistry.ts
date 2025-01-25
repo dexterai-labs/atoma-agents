@@ -37,6 +37,7 @@ import {
   borrowAndSendToUserWrapper,
   repayIntoObligationWrapper,
 } from '../tools/suilend/borrowRepay';
+import { liquidateAndRedeemWrapper } from '../tools/suilend/liquidation';
 
 /* 
 format for tool registry is:
@@ -760,5 +761,50 @@ export function registerAllTools(tools: Tools) {
     'Tool to repay funds into an obligation',
     [],
     repayIntoObligationWrapper,
+  );
+
+  // 7. Liquidate and Redeem
+  tools.registerTool(
+    'liquidate_and_redeem',
+    'Tool to liquidate an underwater position and redeem collateral',
+    [
+      {
+        name: 'lendingMarketId',
+        type: 'string',
+        description: 'ID of the lending market',
+        required: true,
+      },
+      {
+        name: 'lendingMarketType',
+        type: 'string',
+        description: 'Type of the lending market',
+        required: true,
+      },
+      {
+        name: 'obligation',
+        type: 'string',
+        description: 'ID of the obligation to liquidate',
+        required: true,
+      },
+      {
+        name: 'repayCoinType',
+        type: 'string',
+        description: 'Type of coin used to repay the debt',
+        required: true,
+      },
+      {
+        name: 'withdrawCoinType',
+        type: 'string',
+        description: 'Type of collateral coin to withdraw',
+        required: true,
+      },
+      {
+        name: 'repayCoinId',
+        type: 'string',
+        description: 'ID of the coin object used for repayment',
+        required: true,
+      },
+    ],
+    liquidateAndRedeemWrapper,
   );
 }

@@ -1,5 +1,4 @@
 import { Transaction } from '@mysten/sui/transactions';
-import { SuilendClient } from '@suilend/sdk/client';
 import { handleError } from '../../utils';
 import { suilendClientWrapper } from '.';
 
@@ -75,7 +74,7 @@ export async function depositLiquidityAndGetCTokensWrapper(
   try {
     const client = await suilendClientWrapper();
     const transaction = new Transaction();
-    const result = await client.depositLiquidityAndGetCTokens(
+    await client.depositLiquidityAndGetCTokens(
       ownerId,
       coinType,
       value,
