@@ -20,12 +20,49 @@ async function atomaChat(
   messages: { content: string; role: string }[],
   model?: string,
 ) {
-  return await atomaSDK.chat.create({
-    messages,
-    model: model || ATOMA_CHAT_COMPLETIONS_MODEL,
-    maxTokens: 128,
-  });
+  try {
+    return await atomaSDK.chat.create({
+      messages,
+      model: model || ATOMA_CHAT_COMPLETIONS_MODEL,
+      maxTokens: 128,
+    });
+  } catch (error) {
+    // Log the error for monitoring
+    console.error('Atoma service error:', error);
+
+    // Return a fallback response that indicates service unavailability
+    return {
+      choices: [
+        {
+          message: {
+            content: JSON.stringify([
+              {
+                reasoning: 'Atoma service is currently unavailable',
+                response:
+                  'The AI service is temporarily unavailable. Please try direct API calls or check back later.',
+                status: 'failure',
+                query:
+                  messages[messages.length - 1]?.content || 'Unknown query',
+                errors: ['AI service unavailable'],
+              },
+            ]),
+          },
+        },
+      ],
+    };
+  }
 }
 
-export { atomaChat };
+// Health check function that returns service status
+async function isAtomaHealthy(): Promise<boolean> {
+  try {
+    await atomaSDK.health.health();
+    return true;
+  } catch (error) {
+    console.error('Atoma health check failed:', error);
+    return false;
+  }
+}
+
+export { atomaChat, isAtomaHealthy };
 export default atomaSDK;

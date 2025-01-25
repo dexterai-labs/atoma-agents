@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { Request, Response, RequestHandler } from 'express';
 import Agents from '../../agents/SuiAgent';
 import { handleError } from '../../utils';
+import { ServiceStatus, getServiceStatus } from '../../server';
 
 /**
  * Express Router for handling AI agent queries
@@ -9,6 +10,28 @@ import { handleError } from '../../utils';
  */
 const queryRouter = Router();
 const agent = new Agents();
+
+/**
+ * Determines if a query can be handled directly without AI
+ * @param prompt - User's query
+ * @returns Whether the query can be handled directly
+ */
+function canHandleDirectly(prompt: string): boolean {
+  // List of keywords that indicate direct API calls are possible
+  const directKeywords = [
+    'price',
+    'tvl',
+    'exchange rate',
+    'pool info',
+    'staking positions',
+    'stake',
+    'unstake',
+  ];
+
+  return directKeywords.some((keyword) =>
+    prompt.toLowerCase().includes(keyword.toLowerCase()),
+  );
+}
 
 /**
  * POST /query
@@ -31,8 +54,31 @@ const handleQuery: RequestHandler = async (req, res) => {
       ]);
       return;
     }
+
+    // Check service status
+    const serviceStatus = getServiceStatus();
+    if (serviceStatus === ServiceStatus.DEGRADED) {
+      // If service is degraded but query can be handled directly, proceed
+      if (canHandleDirectly(prompt)) {
+        console.log('Handling query directly due to degraded AI service');
+        const agentResponse = await agent.SuperVisorAgent(prompt);
+        res.json(agentResponse);
+        return;
+      }
+
+      // If query requires AI and service is degraded, return error
+      res.status(503).json([
+        handleError('AI service unavailable', {
+          reasoning:
+            'The AI service is currently unavailable for complex queries.',
+          query: prompt,
+        }),
+      ]);
+      return;
+    }
+
+    // Normal processing when service is healthy
     const agentResponse = await agent.SuperVisorAgent(prompt);
-    console.log(agentResponse, 'wow');
     res.json(agentResponse);
   } catch (error: unknown) {
     res.status(500).json([
@@ -45,6 +91,15 @@ const handleQuery: RequestHandler = async (req, res) => {
 };
 
 queryRouter.post('/query', handleQuery);
+
+/**
+ * GET /status
+ * Returns current service status
+ */
+queryRouter.get('/status', (req: Request, res: Response) => {
+  const status = getServiceStatus();
+  res.json({ status });
+});
 
 /**
  * Middleware to handle unsupported HTTP methods
