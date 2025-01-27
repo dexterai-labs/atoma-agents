@@ -1,5 +1,5 @@
 import { Aftermath } from 'aftermath-ts-sdk';
-import { PoolInfo } from '../../../@types/interface';
+import { PoolInfo } from '../../@types/interface';
 import { handleError } from '../../utils';
 
 // Initialize Aftermath SDK for mainnet

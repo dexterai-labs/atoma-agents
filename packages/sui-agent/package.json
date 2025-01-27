@@ -2,16 +2,14 @@
   "name": "@atoma-agents/sui-agent",
   "version": "1.0.0",
   "private": true,
-  "main": "./dist/server.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"src/**/*.{js,ts,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{js,ts,json,md}\"",
     "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/server.js",
-    "dev": "nodemon ./src/server.ts"
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "keywords": [],
   "author": "",
@@ -22,20 +20,14 @@
     "aftermath-ts-sdk": "^1.2.49",
     "atoma-sdk": "github:atoma-network/atoma-sdk-typescript",
     "axios": "^1.7.9",
-    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
     "typescript": "^5.7.3"
   },
   "devDependencies": {
-    "@types/axios": "^0.9.36",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
+    "@types/node": "^20.11.19",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "prettier": "^3.4.2",
-    "eslint": "^8.57.0",
-    "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2"
+    "eslint": "^8.57.0"
   }
 }

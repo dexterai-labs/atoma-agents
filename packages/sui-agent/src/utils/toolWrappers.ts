@@ -1,4 +1,4 @@
-import { TokenBalance } from '../../@types/interface';
+import { TokenBalance } from '../@types/interface';
 import {
   depositIntoTopPools,
   buildMultiPoolWithdrawTx,

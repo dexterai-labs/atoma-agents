@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Request, Response } from 'express';
 
-const rootRouter = Router();
+const rootRouter: Router = Router();
 
 /**
  * GET /
@@ -11,7 +11,10 @@ const rootRouter = Router();
  * @description This endpoint serves as a basic test to verify the API is running
  */
 rootRouter.get('/', (req: Request, res: Response) => {
-  res.send('Hello World');
+  res.json({
+    message: 'Atoma Agents API',
+    version: '1.0.0',
+  });
 });
 
 /**

@@ -1,6 +1,6 @@
 import { SuiClient, SuiHTTPTransport } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
-import { TokenBalance, NETWORK_CONFIG } from '../../@types/interface';
+import { TokenBalance, NETWORK_CONFIG } from '../@types/interface';
 
 /** --------------------------------------------------------------------------
  * Core Transaction Infrastructure

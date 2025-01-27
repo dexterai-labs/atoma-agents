@@ -1,4 +1,4 @@
-import { IntentAgentResponse } from '../../@types/interface';
+import { IntentAgentResponse } from '../@types/interface';
 import Tools from '../tools/aftermath';
 import { registerAllTools } from './ToolRegistry';
 import Utils from '../utils';
