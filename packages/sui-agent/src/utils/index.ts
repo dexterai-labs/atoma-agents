@@ -1,8 +1,8 @@
-import final_answer_agent_prompt from '../prompts/final_answer_agent';
+import { randomUUID } from 'crypto';
+import { AtomaSDK } from 'atoma-sdk';
 import { atomaChat } from '../config/atoma';
 import Tools from '../tools/aftermath';
 import { IntentAgentResponse } from '../@types/interface';
-import { randomUUID } from 'crypto';
 
 /**
  * Utility class for processing agent responses and making decisions
@@ -10,57 +10,64 @@ import { randomUUID } from 'crypto';
  */
 class Utils {
   private tools: Tools;
+  private sdk: AtomaSDK;
+  private prompt: string;
 
-  constructor(tools: Tools) {
-    this.tools = tools;
+  constructor(bearerAuth: string, prompt: string) {
+    this.tools = new Tools(bearerAuth, prompt);
+    this.sdk = new AtomaSDK({ bearerAuth });
+    this.prompt = prompt;
   }
 
   /**
-   * Makes decisions based on intent agent response and executes appropriate actions
-   * @param intent_agent_response - Response from the intent agent
-   * @param query - Original user query
-   * @param tools - Optional tools configuration
-   * @returns Processed and formatted response
+   * Process user query and execute appropriate tool
+   * @param query - User query
+   * @returns Processed response
    */
-  async makeDecision(
-    intent_agent_response: IntentAgentResponse,
-    query: string,
-    tools?: any,
-  ) {
-    if (intent_agent_response.success && intent_agent_response.selected_tool) {
-      return await this.executeTools(
-        intent_agent_response.selected_tool,
-        intent_agent_response.tool_arguments,
-      );
-    } else {
-      return await this.finalAnswer(
-        intent_agent_response.response,
+  async processQuery(query: string): Promise<any> {
+    try {
+      const selectedTool = await this.tools.selectAppropriateTool(query);
+      if (!selectedTool) {
+        return this.finalAnswer('No tool found for the query', query);
+      }
+
+      return this.executeTools(selectedTool.selected_tool || '', selectedTool.tool_arguments || []);
+    } catch (error: unknown) {
+      console.error('Error processing query:', error);
+      return handleError(error, {
+        reasoning: 'The system encountered an issue while processing your query',
         query,
-        tools,
-      );
+      });
     }
   }
 
   /**
-   * Formats and processes the final answer using the AI model
-   * @param response - Raw response to be formatted
-   * @param query - Original user query
-   * @param tools - Optional tools used in processing
-   * @returns Formatted final response
+   * Format final answer
+   * @param response - Raw response
+   * @param query - Original query
+   * @param tools - Tools used
+   * @returns Formatted response
    * @private
    */
-  private async finalAnswer(response: any, query: string, tools?: any) {
-    const finalPrompt = final_answer_agent_prompt
+  private async finalAnswer(
+    response: string,
+    query: string,
+    tools?: string,
+  ): Promise<any> {
+    const finalPrompt = this.prompt
       .replace('${query}', query)
       .replace('${response}', response)
       .replace('tools', `${tools || null}`);
 
-    const finalAns: any = await atomaChat([
-      {
-        content: finalPrompt,
-        role: 'assistant',
-      },
-    ]);
+    const finalAns: any = await atomaChat(
+      this.sdk,
+      [
+        {
+          content: finalPrompt,
+          role: 'assistant',
+        },
+      ]
+    );
     const res = finalAns.choices[0].message.content;
     console.log(finalPrompt);
     return JSON.parse(res);

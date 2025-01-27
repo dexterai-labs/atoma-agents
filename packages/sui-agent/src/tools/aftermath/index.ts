@@ -1,7 +1,6 @@
-import intent_agent_prompt from '../../prompts/intent_agent_prompt';
-
-import { Tool, ToolParameter, toolResponse } from '../../@types/interface';
+import { Tool, toolResponse } from '../../@types/interface';
 import { atomaChat } from '../../config/atoma';
+import { AtomaSDK } from 'atoma-sdk';
 
 /**
  * Main tools management class
@@ -10,37 +9,33 @@ import { atomaChat } from '../../config/atoma';
 class Tools {
   private tools: Tool[] = [];
   private prompt: string;
+  private sdk: AtomaSDK;
 
-  constructor() {
-    this.prompt = intent_agent_prompt;
+  constructor(bearerAuth: string, prompt: string) {
+    this.prompt = prompt;
+    this.sdk = new AtomaSDK({ bearerAuth });
   }
 
   /**
-   * Register a new tool with the system
-   * @param name - Name of the tool
-   * @param description - Description of what the tool does
-   * @param parameters - Parameters the tool accepts
-   * @param process - Function to execute the tool
+   * Register a new tool
+   * @param name - Tool name
+   * @param description - Tool description
+   * @param parameters - Tool parameters
+   * @param process - Tool process function
    */
   registerTool(
     name: string,
     description: string,
-    parameters: ToolParameter[],
-    process: (...args: any[]) => Promise<string> | string,
-  ): void {
-    const tool: Tool = {
-      name,
-      description,
-      parameters,
-      process,
-    };
-    this.tools.push(tool);
+    parameters: { name: string; type: string; description: string; required: boolean }[],
+    process: (...args: any[]) => any
+  ) {
+    this.tools.push({ name, description, parameters, process });
   }
 
   /**
    * Select appropriate tool based on user query
-   * @param query - User's input query
-   * @returns Selected tool response or null if no tool matches
+   * @param query - User query
+   * @returns Selected tool response or null if no tool found
    */
   async selectAppropriateTool(query: string): Promise<toolResponse | null> {
     const finalPrompt = this.prompt.replace(
@@ -48,16 +43,19 @@ class Tools {
       JSON.stringify(this.getAllTools()),
     );
 
-    const ai: any = await atomaChat([
-      {
-        content: finalPrompt,
-        role: 'system',
-      },
-      {
-        content: query || '',
-        role: 'user',
-      },
-    ]);
+    const ai: any = await atomaChat(
+      this.sdk,
+      [
+        {
+          content: finalPrompt,
+          role: 'system',
+        },
+        {
+          content: query || '',
+          role: 'user',
+        },
+      ]
+    );
     const res = ai.choices[0].message.content;
 
     const applicableTools: toolResponse[] = JSON.parse(res);
@@ -74,6 +72,7 @@ class Tools {
     return this.tools;
   }
 }
+
 export default Tools;
 
 //   tools.registerTool("Tool 1", "Description of Tool 1", () => {

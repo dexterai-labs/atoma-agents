@@ -2,29 +2,27 @@ import { IntentAgentResponse } from '../@types/interface';
 import Tools from '../tools/aftermath';
 import { registerAllTools } from './ToolRegistry';
 import Utils from '../utils';
-
-/**
- * Tools instance for handling various tool-related operations
- * Used across the agent system for processing and executing tasks
- */
-const tools = new Tools();
-
-/**
- * Utils instance that provides utility functions
- * Initialized with tools instance for coordinated operations
- */
-const utils = new Utils(tools);
+import intent_agent_prompt from '../prompts/intent_agent_prompt';
+import final_answer_agent_prompt from '../prompts/final_answer_agent';
 
 /**
  * Main agent class that handles intent processing and decision making
  * Coordinates between different agent types to process user queries
  *
  * @example
- * const agent = new Agents();
+ * const agent = new Agents("your-bearer-auth-token");
  * const response = await agent.SuperVisorAgent("What is the current price of the Sui token?");
  * console.log(response);
  */
 class Agents {
+  private tools: Tools;
+  private utils: Utils;
+
+  constructor(bearerAuth: string) {
+    this.tools = new Tools(bearerAuth, intent_agent_prompt);
+    this.utils = new Utils(bearerAuth, final_answer_agent_prompt);
+  }
+
   /**
    * Processes initial user intent and selects appropriate tools
    * @param prompt - User's input query
@@ -32,9 +30,9 @@ class Agents {
    */
   async IntentAgent(prompt: string) {
     // Register all available tools before processing
-    registerAllTools(tools);
+    registerAllTools(this.tools);
     const IntentResponse: IntentAgentResponse =
-      (await tools.selectAppropriateTool(prompt)) as IntentAgentResponse;
+      (await this.tools.selectAppropriateTool(prompt)) as IntentAgentResponse;
     return IntentResponse;
   }
 
@@ -45,10 +43,7 @@ class Agents {
    * @returns Processed response after decision making
    */
   async DecisionMakingAgent(intentResponse: any, query: string) {
-    return await utils.makeDecision(
-      intentResponse as IntentAgentResponse,
-      query,
-    );
+    return await this.utils.processQuery(query);
   }
 
   /**

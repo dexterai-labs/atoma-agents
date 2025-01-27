@@ -1,27 +1,30 @@
-import dotenv from 'dotenv';
 import { AtomaSDK } from 'atoma-sdk';
-
-dotenv.config();
 
 const ATOMA_CHAT_COMPLETIONS_MODEL = 'meta-llama/Llama-3.3-70B-Instruct';
 
-// Initialize Atoma SDK with authentication
-const atomaSDK = new AtomaSDK({
-  bearerAuth: process.env.ATOMASDK_BEARER_AUTH,
-});
+/**
+ * Initialize Atoma SDK with authentication
+ * @param bearerAuth - Bearer auth token for Atoma SDK
+ * @returns Initialized Atoma SDK instance
+ */
+export function initializeAtomaSDK(bearerAuth: string): AtomaSDK {
+  return new AtomaSDK({ bearerAuth });
+}
 
 /**
  * Helper function to create chat completions using Atoma SDK
+ * @param sdk - Initialized Atoma SDK instance
  * @param messages - Array of message objects with content and role
  * @param model - Optional model identifier (defaults to Llama-3.3-70B-Instruct)
  * @returns Chat completion response
  */
 async function atomaChat(
+  sdk: AtomaSDK,
   messages: { content: string; role: string }[],
   model?: string,
 ) {
   try {
-    return await atomaSDK.chat.create({
+    return await sdk.chat.create({
       messages,
       model: model || ATOMA_CHAT_COMPLETIONS_MODEL,
       maxTokens: 128,
@@ -53,10 +56,14 @@ async function atomaChat(
   }
 }
 
-// Health check function that returns service status
-async function isAtomaHealthy(): Promise<boolean> {
+/**
+ * Health check function that returns service status
+ * @param sdk - Initialized Atoma SDK instance
+ * @returns Boolean indicating if service is healthy
+ */
+async function isAtomaHealthy(sdk: AtomaSDK): Promise<boolean> {
   try {
-    await atomaSDK.health.health();
+    await sdk.health.health();
     return true;
   } catch (error) {
     console.error('Atoma health check failed:', error);
@@ -65,4 +72,3 @@ async function isAtomaHealthy(): Promise<boolean> {
 }
 
 export { atomaChat, isAtomaHealthy };
-export default atomaSDK;
