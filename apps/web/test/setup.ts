@@ -3,6 +3,7 @@ import app from '../src/app';
 
 declare global {
   var testApp: Application;
+  var server: any;
 }
 
 beforeAll(() => {

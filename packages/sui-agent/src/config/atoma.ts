@@ -1,6 +1,11 @@
 import { AtomaSDK } from 'atoma-sdk';
+import * as dotenv from 'dotenv';
 
-const ATOMA_CHAT_COMPLETIONS_MODEL = 'meta-llama/Llama-3.3-70B-Instruct';
+// Load environment variables
+dotenv.config();
+
+const ATOMA_CHAT_COMPLETIONS_MODEL = process.env.ATOMA_CHAT_MODEL || 'meta-llama/Llama-3.3-70B-Instruct';
+const sdkInstance: AtomaSDK | null = null;
 
 /**
  * Initialize Atoma SDK with authentication
@@ -15,7 +20,7 @@ export function initializeAtomaSDK(bearerAuth: string): AtomaSDK {
  * Helper function to create chat completions using Atoma SDK
  * @param sdk - Initialized Atoma SDK instance
  * @param messages - Array of message objects with content and role
- * @param model - Optional model identifier (defaults to Llama-3.3-70B-Instruct)
+ * @param model - Optional model identifier (defaults to environment variable or Llama-3.3-70B-Instruct)
  * @returns Chat completion response
  */
 async function atomaChat(
