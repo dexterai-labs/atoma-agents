@@ -19,12 +19,15 @@ import {
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 
 // Transaction wrapper functions
-async function transferCoinWrapper(
-  fromAddress: string,
-  toAddress: string,
-  tokenType: string,
-  amount: string,
+export async function transferCoinWrapper(
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [fromAddress, toAddress, tokenType, amount] = args as [
+    string,
+    string,
+    string,
+    string,
+  ];
   const client = initSuiClient();
   const tx = await buildTransferTx(
     client,
@@ -44,11 +47,14 @@ async function transferCoinWrapper(
   ]);
 }
 
-async function multiTransferWrapper(
-  fromAddress: string,
-  toAddress: string,
-  transfers: TokenBalance[],
+export async function multiTransferWrapper(
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [fromAddress, toAddress, transfers] = args as [
+    string,
+    string,
+    TokenBalance[],
+  ];
   const client = initSuiClient();
   const tx = await buildMultiTransferTx(
     client,
@@ -67,11 +73,14 @@ async function multiTransferWrapper(
   ]);
 }
 
-async function mergeCoinsWrapper(
-  coinType: string,
-  walletAddress: string,
-  maxCoins?: number,
+export async function mergeCoinsWrapper(
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [coinType, walletAddress, maxCoins] = args as [
+    string,
+    string,
+    number | undefined,
+  ];
   const client = initSuiClient();
   const tx = await createMergeCoinsTx(
     client,
@@ -92,9 +101,10 @@ async function mergeCoinsWrapper(
   ]);
 }
 
-async function estimateGasWrapper(
-  transaction: TransactionBlock,
+export async function estimateGasWrapper(
+  ...args: (string | number | bigint | boolean | TransactionBlock)[]
 ): Promise<string> {
+  const [transaction] = args as [TransactionBlock];
   const client = initSuiClient();
   const gasEstimate = await estimateGas(client, transaction);
   return JSON.stringify([
@@ -109,13 +119,16 @@ async function estimateGasWrapper(
 }
 
 // Pool transaction wrapper functions
-async function depositTopPoolsWrapper(
-  walletAddress: string,
-  metric: string,
-  amount: string,
-  numPools: string,
-  slippage: string,
+export async function depositTopPoolsWrapper(
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [walletAddress, metric, amount, numPools, slippage] = args as [
+    string,
+    string,
+    string,
+    string,
+    string,
+  ];
   return depositIntoTopPools(
     walletAddress,
     metric as 'apr' | 'tvl' | 'fees' | 'volume',
@@ -125,12 +138,15 @@ async function depositTopPoolsWrapper(
   );
 }
 
-async function withdrawPoolsWrapper(
-  walletAddress: string,
-  poolId: string,
-  lpAmount: string,
-  slippage: string,
+export async function withdrawPoolsWrapper(
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [walletAddress, poolId, lpAmount, slippage] = args as [
+    string,
+    string,
+    string,
+    string,
+  ];
   const client = initSuiClient();
   const tx = await buildMultiPoolWithdrawTx(
     client,
@@ -156,41 +172,32 @@ async function withdrawPoolsWrapper(
 }
 
 // Staking wrapper functions
-async function getStakingPositionsWrapper(
-  walletAddress: string,
+export async function getStakingPositionsWrapper(
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [walletAddress] = args as [string];
   return getStakingPositions(walletAddress);
 }
 
-async function getSuiTvlWrapper(): Promise<string> {
+export async function getSuiTvlWrapper(): Promise<string> {
   return getSuiTvl();
 }
 
-async function getAfSuiExchangeRateWrapper(): Promise<string> {
+export async function getAfSuiExchangeRateWrapper(): Promise<string> {
   return getAfSuiExchangeRate();
 }
 
-async function getStakeTransactionWrapper(
-  walletAddress: string,
-  suiAmount: string,
-  validatorAddress: string,
+export async function getStakeTransactionWrapper(
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [walletAddress, suiAmount, validatorAddress] = args as [
+    string,
+    string,
+    string,
+  ];
   return getStakeTransaction(
     walletAddress,
     BigInt(suiAmount),
     validatorAddress,
   );
 }
-
-export {
-  transferCoinWrapper,
-  multiTransferWrapper,
-  mergeCoinsWrapper,
-  estimateGasWrapper,
-  depositTopPoolsWrapper,
-  withdrawPoolsWrapper,
-  getStakingPositionsWrapper,
-  getSuiTvlWrapper,
-  getAfSuiExchangeRateWrapper,
-  getStakeTransactionWrapper,
-};

@@ -36,7 +36,10 @@ class AftermathTool {
    * const apr = await AftermathTool.getTokenAPR("0x123...abc");
    * ```
    */
-  static async getTokenAPR(tokenAddress: string): Promise<string> {
+  static async getTokenAPR(
+    ...args: (string | number | bigint | boolean)[]
+  ): Promise<string> {
+    const tokenAddress = args[0] as string;
     try {
       const aftermath = this.getInstance();
       const apr = await aftermath.Prices();

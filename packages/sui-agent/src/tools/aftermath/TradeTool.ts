@@ -53,11 +53,14 @@ async function findTokensInPool(
  * @returns JSON string containing spot price information
  */
 export async function getPoolSpotPrice(
-  poolId: string,
-  coinInType: string,
-  coinOutType: string,
-  withFees = true,
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [poolId, coinInType, coinOutType, withFees] = args as [
+    string,
+    string,
+    string,
+    boolean,
+  ];
   try {
     // Fetch pool and validate tokens
     const pool = await pools.getPool({ objectId: poolId });
@@ -118,12 +121,14 @@ export async function getPoolSpotPrice(
  * @returns JSON string containing trade output information
  */
 export async function getTradeAmountOut(
-  poolId: string,
-  coinInType: string,
-  coinOutType: string,
-  coinInAmount: bigint,
-  referral = false,
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [poolId, coinInType, coinOutType, coinInAmount] = args as [
+    string,
+    string,
+    string,
+    string,
+  ];
   try {
     // Fetch pool and validate tokens
     const pool = await pools.getPool({ objectId: poolId });
@@ -144,8 +149,7 @@ export async function getTradeAmountOut(
     const amountOut = pool.getTradeAmountOut({
       coinInType: matchedCoinIn,
       coinOutType: matchedCoinOut,
-      coinInAmount,
-      referral,
+      coinInAmount: BigInt(coinInAmount),
     });
 
     return JSON.stringify([
@@ -183,10 +187,13 @@ export async function getTradeAmountOut(
  * @returns JSON string containing trade route information
  */
 export async function getTradeRoute(
-  coinInType: string,
-  coinOutType: string,
-  coinInAmount: bigint,
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [coinInType, coinOutType, coinInAmount] = args as [
+    string,
+    string,
+    string,
+  ];
   try {
     const router = af.Router();
     // Search for tokens across all pools
@@ -211,7 +218,7 @@ export async function getTradeRoute(
     const route = await router.getCompleteTradeRouteGivenAmountIn({
       coinInType: matchedCoinIn,
       coinOutType: matchedCoinOut,
-      coinInAmount,
+      coinInAmount: BigInt(coinInAmount),
     });
 
     return JSON.stringify([
@@ -251,12 +258,14 @@ export async function getTradeRoute(
  * @returns JSON string containing deposit transaction data
  */
 export async function getDepositTransaction(
-  poolId: string,
-  walletAddress: string,
-  amountsIn: { [key: string]: bigint },
-  slippage = 0.01,
-  referrer?: string,
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [poolId, walletAddress, amountsIn, slippage] = args as [
+    string,
+    string,
+    object,
+    number,
+  ];
   try {
     // Validate pool exists
     const pool = await pools.getPool({ objectId: poolId });
@@ -294,7 +303,6 @@ export async function getDepositTransaction(
       walletAddress,
       amountsIn: convertedAmountsIn,
       slippage,
-      referrer,
     });
 
     return JSON.stringify([
@@ -334,13 +342,10 @@ export async function getDepositTransaction(
  * @returns JSON string containing withdrawal transaction data
  */
 export async function getWithdrawTransaction(
-  poolId: string,
-  walletAddress: string,
-  amountsOutDirection: { [key: string]: bigint },
-  lpCoinAmount: bigint,
-  slippage = 0.01,
-  referrer?: string,
+  ...args: (string | number | bigint | boolean)[]
 ): Promise<string> {
+  const [poolId, walletAddress, amountsOutDirection, lpCoinAmount, slippage] =
+    args as [string, string, object, string, number];
   try {
     // Validate pool exists
     const pool = await pools.getPool({ objectId: poolId });
@@ -377,9 +382,8 @@ export async function getWithdrawTransaction(
     const tx = await pool.getWithdrawTransaction({
       walletAddress,
       amountsOutDirection: convertedAmountsOut,
-      lpCoinAmount,
+      lpCoinAmount: BigInt(lpCoinAmount),
       slippage,
-      referrer,
     });
 
     return JSON.stringify([

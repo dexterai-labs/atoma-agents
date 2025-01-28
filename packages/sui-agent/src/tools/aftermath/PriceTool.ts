@@ -23,7 +23,10 @@ function normalizeCoinSymbol(symbol: string): string | null {
  * @param coin - Coin symbol or address
  * @returns Formatted price string or error message
  */
-export async function getCoinPrice(coin: string): Promise<string> {
+export async function getCoinPrice(
+  ...args: (string | number | bigint | boolean)[]
+): Promise<string> {
+  const coin = args[0] as string; // Cast first argument to string
   try {
     // Handle direct addresses vs symbols
     let coinType = coin;
@@ -67,7 +70,10 @@ export async function getCoinPrice(coin: string): Promise<string> {
  * @returns JSON string containing price information or error response
  * @throws Error if price fetch fails or invalid token addresses
  */
-export async function coinsToPrice(coins: string): Promise<string> {
+export async function coinsToPrice(
+  ...args: (string | number | bigint | boolean)[]
+): Promise<string> {
+  const coins = args[0] as string;
   try {
     // Convert coin symbols to addresses
     const coinTypes = coins.split(',').map((coin) => {
