@@ -4,7 +4,7 @@ export interface IntentAgentResponse {
   response: null | string;
   needs_additional_info: boolean;
   additional_info_required: null | string[];
-  tool_arguments: any[];
+  tool_arguments: (string | number | boolean | bigint)[];
 }
 export interface toolResponse {
   success: boolean;
@@ -12,7 +12,7 @@ export interface toolResponse {
   response: null | string;
   needs_additional_info: boolean;
   additional_info_required: null | string[];
-  tool_arguments: any[];
+  tool_arguments: (string | number | boolean | bigint)[];
 }
 export interface ToolParameter {
   name: string;
@@ -24,7 +24,7 @@ export interface Tool {
   name: string;
   description: string;
   parameters: ToolParameter[];
-  process: (...args: any[]) => Promise<string> | string;
+  process: (...args: (string | number | boolean | bigint)[]) => Promise<string> | string;
 }
 export declare const COIN_SYNONYMS: Record<string, string>;
 export declare const COIN_ADDRESSES: {

@@ -5,7 +5,7 @@ export interface IntentAgentResponse {
   response: null | string; // Response message from the operation
   needs_additional_info: boolean; // Indicates if more information is needed
   additional_info_required: null | string[]; // List of additional information fields needed
-  tool_arguments: any[]; // Arguments passed to the tool
+  tool_arguments: (string | number | boolean | bigint)[]; // Arguments passed to the tool
 }
 
 // Response interface for tool operations (similar to IntentAgentResponse)
@@ -15,7 +15,7 @@ export interface toolResponse {
   response: null | string;
   needs_additional_info: boolean;
   additional_info_required: null | string[];
-  tool_arguments: any[];
+  tool_arguments: (string | number | boolean | bigint)[];
 }
 
 // Defines the structure for tool parameters
@@ -31,7 +31,7 @@ export interface Tool {
   name: string; // Name of the tool
   description: string; // Description of what the tool does
   parameters: ToolParameter[]; // List of parameters the tool accepts
-  process: (...args: any[]) => Promise<string> | string; // Function to execute the tool
+  process: (...args: (string | number | boolean | bigint)[]) => Promise<string> | string; // Function to execute the tool
 }
 
 // Mapping of different coin names/variants to their standardized symbol
