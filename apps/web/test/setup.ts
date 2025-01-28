@@ -1,15 +1,33 @@
 import { Application } from 'express';
+import { Server } from 'http';
 import app from '../src/app';
 
 declare global {
   var testApp: Application;
-  var server: any;
+  var server: Server;
 }
 
 beforeAll(() => {
   global.testApp = app;
+  global.server = app.listen(0); // Use port 0 for random available port
 });
 
 afterAll(async () => {
-  // Add cleanup logic here if needed
+  // Close any open handles
+  await new Promise<void>((resolve) => {
+    if (global.server) {
+      global.server.close(() => resolve());
+    } else {
+      resolve();
+    }
+  });
+});
+
+// Handle process termination
+process.on('SIGTERM', () => {
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  process.exit(0);
 }); 
