@@ -32,7 +32,9 @@ class Tools {
       description: string;
       required: boolean;
     }[],
-    process: (...args: any[]) => any,
+    process: (
+      ...args: (string | number | boolean | bigint)[]
+    ) => Promise<string> | string,
   ) {
     this.tools.push({ name, description, parameters, process });
   }
