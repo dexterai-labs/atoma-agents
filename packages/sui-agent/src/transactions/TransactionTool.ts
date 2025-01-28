@@ -1,6 +1,10 @@
 import { SuiClient, SuiHTTPTransport } from '@mysten/sui.js/client';
-import { TransactionBlock } from '@mysten/sui.js/transactions';
+import {
+  TransactionBlock,
+  TransactionObjectArgument,
+} from '@mysten/sui.js/transactions';
 import { TokenBalance, NETWORK_CONFIG } from '../@types/interface';
+import { Signer } from '@mysten/sui.js/cryptography';
 
 /** --------------------------------------------------------------------------
  * Core Transaction Infrastructure
@@ -134,11 +138,12 @@ export async function estimateGas(
 export async function executeTransaction(
   client: SuiClient,
   tx: TransactionBlock,
-  signer: any,
+  signer: Signer,
 ) {
   try {
-    const result = await signer.signAndExecuteTransactionBlock({
+    const result = await client.signAndExecuteTransactionBlock({
       transactionBlock: tx,
+      signer,
       options: {
         showEffects: true,
         showEvents: true,
@@ -175,12 +180,17 @@ export function addMoveCall(
   tx: TransactionBlock,
   target: MoveTarget,
   typeArguments: string[] = [],
-  args: any[] = [],
+  args: (string | number | boolean | bigint)[] = [],
 ): TransactionBlock {
   tx.moveCall({
     target,
     typeArguments,
-    arguments: args,
+    arguments: args.map((arg) => {
+      if (typeof arg === 'string' && arg.startsWith('0x')) {
+        return tx.object(arg);
+      }
+      return tx.pure(arg);
+    }),
   });
   return tx;
 }
@@ -261,7 +271,7 @@ export async function createSponsoredTx(
  */
 export function createMoveVec(
   tx: TransactionBlock,
-  elements: any[],
+  elements: (string | TransactionObjectArgument)[],
   type?: string,
 ) {
   return tx.makeMoveVec({
@@ -372,7 +382,11 @@ export class TransactionAgent {
    * @param type - Optional type annotation
    * @returns Move vector
    */
-  createMoveVec(tx: TransactionBlock, elements: any[], type?: string) {
+  createMoveVec(
+    tx: TransactionBlock,
+    elements: (string | TransactionObjectArgument)[],
+    type?: string,
+  ) {
     return tx.makeMoveVec({
       objects: elements,
       type,
