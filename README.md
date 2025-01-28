@@ -32,13 +32,53 @@ git clone https://github.com/atoma-network/atoma-agents.git
 
 # Install dependencies
 cd atoma-agents
-npm install
+pnpm install
 
 # Start the development server
-npm run dev
+pnpm run dev
 ```
 
 The server will start on port 2512 by default.
+
+### Using the Agent Package Directly
+
+You can also use the Sui Agent package directly in your TypeScript/JavaScript applications:
+
+```typescript
+import Agent from '@atoma-agents/sui-agent/src/agents/SuiAgent';
+
+// Initialize the agent with your Atoma SDK bearer token
+const suiAgent = new Agent('your_atoma_sdk_bearer_token');
+
+// Use the agent to process queries
+async function processQuery(query: string) {
+  try {
+    const result = await suiAgent.SuperVisorAgent(query);
+    return result;
+  } catch (error) {
+    console.error('Error processing query:', error);
+    throw error;
+  }
+}
+```
+
+Example usage in an Express route:
+
+```typescript
+import Agent from '@atoma-agents/sui-agent/src/agents/SuiAgent';
+
+const suiAgent = new Agent(config.atomaSdkBearerAuth);
+
+app.post('/query', async (req, res) => {
+  try {
+    const { query } = req.body;
+    const result = await suiAgent.SuperVisorAgent(query);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+```
 
 ## Usage
 
@@ -47,27 +87,27 @@ You can interact with the agent using either cURL or Postman.
 ### Using cURL
 
 ```bash
-# Example: Get price of SUI and BTC
-curl -X POST http://localhost:2512/query \
+# Example query
+curl -X POST http://localhost:2512/v1/query \
   -H "Content-Type: application/json" \
-  -d '{"prompt": "what is the price of sui and btc"}'
+  -d '{"query": "what is the price of sui and btc"}'
 ```
 
 ### Using Postman
 
-1. Create a new POST request to `http://localhost:2512/query`
+1. Create a new POST request to `http://localhost:2512/v1/query`
 2. Set the Content-Type header to `application/json`
-3. In the request body, add your prompt:
+3. In the request body, add your query:
 
 ```json
 {
-  "prompt": "what is the price of sui and btc"
+  "query": "what is the price of sui and btc"
 }
 ```
 
-## Sample Prompts
+## Sample Queries
 
-Here are some example prompts you can try:
+Here are some example queries you can try:
 
 - "What is the current price of SUI and BTC?"
 - "Show me the top 5 pools by TVL"
@@ -99,15 +139,15 @@ export async function yourToolFunction(param1: string): Promise<string> {
 
 // In ToolRegistry.ts
 tools.registerTool(
-  "your_tool_name",
-  "Description of what your tool does",
+  'your_tool_name',
+  'Description of what your tool does',
   [
     {
-      name: "param1",
-      type: "string",
-      description: "Description of the parameter",
-      required: true,
-    },
+      name: 'param1',
+      type: 'string',
+      description: 'Description of the parameter',
+      required: true
+    }
   ],
   yourToolFunction
 );
@@ -117,10 +157,13 @@ tools.registerTool(
 
 ```
 atoma-agents/
-└── sui-agent/
-    ├── types/            # TypeScript type definitions
-    └── src/
-        ├── app.ts        # Main application entry point
+├── apps/
+    ├── web/
+├── packages/
+    ├── sui-agent/
+        ├── types/            # TypeScript type definitions
+        └── src/
+            ├── app.ts        # Main application entry point
         ├── server.ts     # Server configuration
         ├── tools/        # Tool registry
         |   └── aftermath/    # Aftermath Finance protocol integration

@@ -19,8 +19,8 @@
  *   tool_arguments: any[]    // arguments needed for the selected tool
  * }
  */
-const intent_query = `You are an intelligent assistant called CoinSage.
-    YOUR NAME IS COINSAGE
+const intent_query = `You are an intelligent assistant called AtomaSage.
+    YOUR NAME IS ATOMASAGE
 
 You are tasked with ONLY answering questions that could be related to the sui blockchain (directly or indirectly). Follow these steps to respond effectively:
 
