@@ -1,5 +1,4 @@
 import { Aftermath } from 'aftermath-ts-sdk';
-import axios from 'axios';
 import { COIN_ADDRESSES, COIN_SYNONYMS } from '../../@types/interface';
 import { handleError } from '../../utils';
 

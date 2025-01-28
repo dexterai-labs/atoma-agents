@@ -42,7 +42,10 @@ class Agents {
    * @param query - Original user query
    * @returns Processed response after decision making
    */
-  async DecisionMakingAgent(intentResponse: any, query: string) {
+  async DecisionMakingAgent(
+    intentResponse: IntentAgentResponse,
+    query: string,
+  ) {
     return await this.utils.processQuery(query);
   }
 

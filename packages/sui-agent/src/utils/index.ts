@@ -2,8 +2,6 @@ import { randomUUID } from 'crypto';
 import { AtomaSDK } from 'atoma-sdk';
 import { atomaChat } from '../config/atoma';
 import Tools from '../tools/aftermath';
-import { IntentAgentResponse } from '../@types/interface';
-
 /**
  * Utility class for processing agent responses and making decisions
  * Handles the execution of tools and formatting of final responses

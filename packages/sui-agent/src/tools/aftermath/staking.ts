@@ -1,14 +1,5 @@
 import { Aftermath } from 'aftermath-ts-sdk';
-import { SuiClient, SuiHTTPTransport } from '@mysten/sui.js/client';
 import { handleError } from '../../utils';
-import { NETWORK_CONFIG } from '../../@types/interface';
-
-// Initialize Sui client
-const suiClient = new SuiClient({
-  transport: new SuiHTTPTransport({
-    url: NETWORK_CONFIG.MAINNET.fullnode,
-  }),
-});
 
 // Initialize Aftermath SDK
 const afSdk = new Aftermath('MAINNET');

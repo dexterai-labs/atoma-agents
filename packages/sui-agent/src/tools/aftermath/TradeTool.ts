@@ -1,4 +1,4 @@
-import { Aftermath } from 'aftermath-ts-sdk';
+import { Aftermath, Pool } from 'aftermath-ts-sdk';
 import { handleError } from '../../utils';
 
 // Initialize Aftermath SDK for mainnet
@@ -14,7 +14,7 @@ const pools = af.Pools();
  * @throws Error if tokens are not found in the pool
  */
 async function findTokensInPool(
-  pool: any,
+  pool: Pool,
   coinInType: string,
   coinOutType: string,
 ) {

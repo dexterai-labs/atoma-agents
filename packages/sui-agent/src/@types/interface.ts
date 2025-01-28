@@ -31,7 +31,9 @@ export interface Tool {
   name: string; // Name of the tool
   description: string; // Description of what the tool does
   parameters: ToolParameter[]; // List of parameters the tool accepts
-  process: (...args: (string | number | boolean | bigint)[]) => Promise<string> | string; // Function to execute the tool
+  process: (
+    ...args: (string | number | boolean | bigint)[]
+  ) => Promise<string> | string; // Function to execute the tool
 }
 
 // Mapping of different coin names/variants to their standardized symbol

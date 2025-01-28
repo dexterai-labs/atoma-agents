@@ -1,4 +1,4 @@
-import { Aftermath } from 'aftermath-ts-sdk';
+import { Aftermath, Pool } from 'aftermath-ts-sdk';
 import { PoolInfo } from '../../@types/interface';
 import { handleError } from '../../utils';
 
@@ -16,7 +16,7 @@ type SortOrder = 'asc' | 'desc';
  * @param poolId - Unique identifier for the pool
  * @returns Standardized pool information
  */
-async function processPool(pool: any, poolId: string): Promise<PoolInfo> {
+async function processPool(pool: Pool, poolId: string): Promise<PoolInfo> {
   try {
     const metrics = await pools.getPoolsStats({ poolIds: [poolId] });
     const poolMetrics = metrics[0];
@@ -170,30 +170,6 @@ export async function getPoolEvents(
     ]);
   }
 }
-
-/**
- * Calculates pool APR based on volume and TVL
- * @param pool - Pool data containing volume and TVL information
- * @returns Calculated APR as a percentage
- */
-export function calculatePoolApr(pool: any): number {
-  try {
-    // Convert values from base units
-    const volume24h = Number(pool.pool.volume24h || 0) / 1e9;
-    const tvl = Number(pool.pool.lpCoinSupply || 0) / 1e9;
-    if (tvl === 0) return 0;
-
-    // Calculate annual revenue and APR
-    const feeRate = Number(pool.pool.flatness || 0) / 1e9;
-    const feeRevenue24h = volume24h * feeRate;
-    const annualRevenue = feeRevenue24h * 365;
-    return (annualRevenue / tvl) * 100;
-  } catch (error) {
-    console.error('Error calculating pool APR:', error);
-    return 0;
-  }
-}
-
 /**
  * Gets ranked pools by specified metric
  * @param metric - Metric to rank by (apr, tvl, fees, volume)

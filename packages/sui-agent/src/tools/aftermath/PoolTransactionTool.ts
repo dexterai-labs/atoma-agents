@@ -38,7 +38,7 @@ interface RankedPool {
 function convertAftermathTransaction(tx: unknown): AftermathTransaction {
   const rawTx = tx as {
     target: string;
-    arguments: any[];
+    arguments: (string | number | boolean | bigint)[];
     typeArguments: string[];
   };
 

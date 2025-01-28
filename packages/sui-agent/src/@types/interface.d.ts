@@ -24,7 +24,9 @@ export interface Tool {
   name: string;
   description: string;
   parameters: ToolParameter[];
-  process: (...args: (string | number | boolean | bigint)[]) => Promise<string> | string;
+  process: (
+    ...args: (string | number | boolean | bigint)[]
+  ) => Promise<string> | string;
 }
 export declare const COIN_SYNONYMS: Record<string, string>;
 export declare const COIN_ADDRESSES: {
