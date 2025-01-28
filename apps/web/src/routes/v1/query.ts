@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { Request, Response } from 'express';
 import { config } from '../../config';
 import Agent from '@atoma-agents/sui-agent/src/agents/SuiAgent';
-let suiAgent = new Agent(config.atomaSdkBearerAuth);
+const suiAgent = new Agent(config.atomaSdkBearerAuth);
 const queryRouter: Router = Router();
 
 // Health check endpoint
@@ -21,7 +21,7 @@ const handleQuery = async (req: Request, res: Response): Promise<void> => {
       return;
     }
     // TODO: Implement query handling with sui-agent
-    let result = await suiAgent.SuperVisorAgent(query);
+    const result = await suiAgent.SuperVisorAgent(query);
     res.status(200).json(result);
   } catch (error) {
     console.error('Error handling query:', error);
