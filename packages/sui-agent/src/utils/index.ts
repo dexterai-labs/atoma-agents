@@ -2,6 +2,8 @@ import { randomUUID } from 'crypto';
 import { AtomaSDK } from 'atoma-sdk';
 import { atomaChat } from '../config/atoma';
 import Tools from '../tools/aftermath';
+import { ToolArgument } from '../@types/interface';
+
 /**
  * Utility class for processing agent responses and making decisions
  * Handles the execution of tools and formatting of final responses
@@ -22,7 +24,7 @@ class Utils {
    * @param query - User query
    * @returns Processed response
    */
-  async processQuery(query: string): Promise<any> {
+  async processQuery(query: string) {
     try {
       const selectedTool = await this.tools.selectAppropriateTool(query);
       if (!selectedTool) {
@@ -51,17 +53,13 @@ class Utils {
    * @returns Formatted response
    * @private
    */
-  private async finalAnswer(
-    response: string,
-    query: string,
-    tools?: string,
-  ): Promise<any> {
+  private async finalAnswer(response: string, query: string, tools?: string) {
     const finalPrompt = this.prompt
       .replace('${query}', query)
       .replace('${response}', response)
       .replace('tools', `${tools || null}`);
 
-    const finalAns: any = await atomaChat(this.sdk, [
+    const finalAns = await atomaChat(this.sdk, [
       {
         content: finalPrompt,
         role: 'assistant',
@@ -79,7 +77,10 @@ class Utils {
    * @returns Processed tool response
    * @private
    */
-  private async executeTools(selected_tool: string, args: any[] | null) {
+  private async executeTools(
+    selected_tool: string,
+    args: ToolArgument[] | null,
+  ) {
     const tool = this.tools.getAllTools().find((t) => t.name === selected_tool);
     console.log('Selected tool:', selected_tool);
     console.log('Tool arguments:', args);

@@ -8,6 +8,8 @@ export interface IntentAgentResponse {
   tool_arguments: (string | number | boolean | bigint)[]; // Arguments passed to the tool
 }
 
+export type ToolArgument = string | number | boolean | bigint;
+
 // Response interface for tool operations (similar to IntentAgentResponse)
 export interface toolResponse {
   success: boolean;
